@@ -1,0 +1,51 @@
+# version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: inventpedia-mongo
+    ports:
+      - "30017:27017"
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - inventpedia-network
+
+  backend:
+    build:
+      context: ./server  # Backend directory
+      dockerfile: Dockerfile
+    image: inventpedia-backend:1.0
+    container_name: inventpedia-backend
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET_KEY}
+    depends_on:
+      - mongodb
+    networks:
+      - inventpedia-network
+
+  frontend:
+    build:
+      context: ./frontend  # Frontend directory
+      dockerfile: Dockerfile
+    image: inventpedia-frontend:1.0
+    container_name: inventpedia-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:4000  # Point frontend to backend
+    depends_on:
+      - backend
+    networks:
+      - inventpedia-network
+
+networks:
+  inventpedia-network:
+    driver: bridge
