@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 //const notFound = require("../middlewares/v1/notFound");
 const app = express();
 
-//import userRoute from "../route/v1/userRoute.ts";
+import userRoute from "../route/v1/userRoute";
 // import postRoute from "../route/v1/postRoute";
 // import tagRoute  from "../route/v1/tagRoute"
 // import categoryRoute from "../route/v1/categoryRoute";
@@ -24,10 +25,11 @@ const app = express();
 // use these format if you want anyone to access your api
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 //app.use(notFound);
 
 //routes
-//app.use("/v1/api/users", userRoute);
+app.use("/v1/api/users", userRoute);
 // app.use("/v1/api/post", postRoute);
 // app.use("/v1/api/tag", tagRoute);
 // app.use("/v1/api/categories", categoryRoute);
