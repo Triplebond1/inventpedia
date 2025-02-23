@@ -1,12 +1,12 @@
 export enum status {
-  NotFound = 404,
-  accessDenied = 403,
-  Unauthorized = 401,
   Success = 200,
   created = 201,
-  noContent = 204,
   Accepted = 202,
+  noContent = 204,
   BadRequest = 400,
+  Unauthorized = 401,
+  accessDenied = 403,
+  NotFound = 404,
   serverError = 500,
 }
 

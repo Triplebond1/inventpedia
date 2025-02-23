@@ -2,10 +2,14 @@ import express, { Request, Response } from "express";
 const path = require("path");
 const dotenv = require("dotenv");
 import apiApp from "./server/app";
+import { connectDB } from "./server/db";
 
 dotenv.config();
 
 const app = express();
+
+// Connect to MongoDB (if using)
+const db = connectDB();
 
 // Serve Next.js frontend (only if needed)
 app.use(express.static(path.join(__dirname, "../../frontend/.next")));
@@ -24,7 +28,14 @@ app.get("*", (req: Request, res: Response) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+// db.then(() => {
+//   const PORT = process.env.PORT || 4000;
+//   app.listen(PORT, () => {
+//     console.log(`🚀 Server running on http://localhost:${PORT}`);
+//   });
+// }).catch();
+
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

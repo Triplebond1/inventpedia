@@ -78,10 +78,11 @@ export const logInUserHandler = async (
 
     res.status(200).json({
       message: "Logged in successfully",
-      user: userData.toJSON,
+      user: userData,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error", error });
+    return;
   }
 };

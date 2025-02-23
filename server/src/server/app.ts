@@ -29,7 +29,7 @@ app.use(cookieParser());
 //app.use(notFound);
 
 //routes
-app.use("/v1/api/users", userRoute);
+app.use("/v1/users", userRoute);
 // app.use("/v1/api/post", postRoute);
 // app.use("/v1/api/tag", tagRoute);
 // app.use("/v1/api/categories", categoryRoute);

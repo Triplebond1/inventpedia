@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface IImage extends Document {
+interface IVideo extends Document {
   fileName: string;
   originalName: string;
   url: string;
@@ -17,7 +17,7 @@ interface IImage extends Document {
   createdAt?: Date;
 }
 
-const imageSchema = new Schema<IImage>(
+const videoSchema = new Schema<IVideo>(
   {
     fileName: { type: String, required: true, trim: true, maxlength: 200 },
     originalName: { type: String, required: true, trim: true, maxlength: 200 },
@@ -38,5 +38,5 @@ const imageSchema = new Schema<IImage>(
   }
 );
 
-const Image: Model<IImage> = mongoose.model<IImage>("Image", imageSchema);
-export default Image;
+const Video: Model<IVideo> = mongoose.model<IVideo>("Video", videoSchema);
+export default Video;
