@@ -1,9 +1,8 @@
 import { Response, Request } from "express";
-import Post from "../../../../models/post";
-import AuthRequest from "../../../../types/authRequest";
-import { PostVersion } from "../../../../models/postVersioning";
-import { status } from "../../../../utilities/enums/statusCode";
-
+import Post from "../../../models/post";
+import AuthRequest from "../../../types/authRequest";
+import { PostVersion } from "../../../models/postVersioning";
+import { status } from "../../../utilities/enums/statusCode";
 
 export const revertPostVersion = async (req: AuthRequest, res: Response) => {
   const { postId, versionIndex }: { postId: string; versionIndex: number } =
@@ -15,8 +14,13 @@ export const revertPostVersion = async (req: AuthRequest, res: Response) => {
       return res.status(status.NotFound).json({ message: "Post not found" });
     }
 
-    if (versionIndex < 0 || versionIndex >= post.version.versionIndexList.length) {
-      return res.status(status.BadRequest).json({ message: "Invalid version index" });
+    if (
+      versionIndex < 0 ||
+      versionIndex >= post.version.versionIndexList.length
+    ) {
+      return res
+        .status(status.BadRequest)
+        .json({ message: "Invalid version index" });
     }
     const versionNumber = post.version.versionIndexList[versionIndex];
     if (!versionNumber) {
@@ -53,6 +57,8 @@ export const revertPostVersion = async (req: AuthRequest, res: Response) => {
     return res.status(status.Success).json(post);
   } catch (error: any) {
     console.error("Error reverting post:", error);
-    return res.status(status.ServerError).json({ message: "Error reverting post", error });
+    return res
+      .status(status.ServerError)
+      .json({ message: "Error reverting post", error });
   }
 };

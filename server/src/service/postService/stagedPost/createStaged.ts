@@ -1,7 +1,7 @@
-import { IPost } from "../../../../models/post";
-import { IStagedPost } from "../../../../models/stagedPost";
-import { StagedPost } from "../../../../models/stagedPost";
-import { IUser } from "../../../../models/user";
+import { IPost } from "../../../models/post";
+import { IStagedPost } from "../../../models/stagedPost";
+import { StagedPost } from "../../../models/stagedPost";
+import { IUser } from "../../../models/user";
 
 // @desc    Create a new staged post
 // @route   POST /v1/api/stagedPost
@@ -16,7 +16,7 @@ export const createStagedPost = async (
     }
 
     // Create the staged post
- const stagedPost = new StagedPost({
+    const stagedPost = new StagedPost({
       postId: data._id,
       StagedPostAuthor: user._id,
       title: data.title,

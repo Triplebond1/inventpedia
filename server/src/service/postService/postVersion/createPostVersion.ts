@@ -1,8 +1,8 @@
-import { PostVersion } from "../../../../models/postVersioning";
-import { IUser } from "../../../../models/user";
-import { IPost } from "../../../../models/post";
-import { IPostVersion } from "../../../../models/postVersioning";
-import { versionLIst } from "../../../../types/interface";
+import { PostVersion } from "../../../models/postVersioning";
+import { IUser } from "../../../models/user";
+import { IPost } from "../../../models/post";
+import { IPostVersion } from "../../../models/postVersioning";
+import { versionLIst } from "../../../types/interface";
 
 export const CreatePostVersion = async (
   data: IPost,

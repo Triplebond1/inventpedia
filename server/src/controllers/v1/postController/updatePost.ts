@@ -7,11 +7,11 @@ import { IPostVersion, PostVersion } from "../../../models/postVersioning";
 import {
   createPostNewVersion,
   CreatePostVersion,
-} from "./postVersion.ts/createPostVersion";
+} from "../../../service/postService/postVersion/createPostVersion";
 import {
   createStagedPost,
   createStagedPostForAdmin,
-} from "./stagedPost/createStaged";
+} from "../../../service/postService/stagedPost/createStaged";
 
 const resStatus = status;
 
@@ -208,7 +208,7 @@ export const updatePostHandler = async (
       }
       return res
         .status(resStatus.Success)
-        .json({ message: "create stage successfully"});
+        .json({ message: "create stage successfully" });
     }
     if (updateData) {
       // Check if the post has a version
