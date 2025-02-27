@@ -80,25 +80,25 @@ export const updatePostHandler = async (
     }
 
     // Authorization check: only admin, editor, author, or contributor can update the post
+    const allowedRoles = [
+      "admin",
+      "author",
+      "contributor",
+      "editor",
+      "moderator",
+      "reviewer",
+      "subscriber",
+    ];
+    const isAuthorized = allowedRoles.includes(user.role);
 
-    if (post.ownContent == false) {
-      const allowedRoles = [
-        "admin",
-        "author",
-        "contributor",
-        "editor",
-        "moderator",
-        "reviewer",
-        "subscriber",
-      ];
-      const isAuthorized = allowedRoles.includes(user.role);
+    if (!isAuthorized) {
+      return res
+        .status(resStatus.Unauthorized)
+        .json({ message: "You are not authorized to update this post." });
+    }
 
-      if (!isAuthorized) {
-        return res
-          .status(resStatus.Unauthorized)
-          .json({ message: "You are not authorized to update this post." });
-      }
-    } else {
+    //if post is our own content and manage by us is shdould be edited by comminuity for consistency.
+    if (post.ownContent === true) {
       const allowedRolesForUpdates = ["admin", "editor"];
       const isAuthorizedRole =
         allowedRolesForUpdates.includes(user.role) ||
@@ -204,11 +204,11 @@ export const updatePostHandler = async (
       if (!createStagePost) {
         return res
           .status(resStatus.ServerError)
-          .json({ message: "unable to create a stages post" });
+          .json({ message: "unable to create a stage post" });
       }
       return res
         .status(resStatus.Success)
-        .json({ message: "update staged successfully" });
+        .json({ message: "create stage successfully"});
     }
     if (updateData) {
       // Check if the post has a version
