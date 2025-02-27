@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import slugify from "slugify";
-import { ImageType, VideoType } from "../types/type";
+
 
 export interface IPost extends Document {
   title: string;
@@ -10,8 +10,8 @@ export interface IPost extends Document {
   slug: string;
   parentPost?: Schema.Types.ObjectId;
   permalink: string;
-  author: Schema.Types.ObjectId;
-  editor?: Schema.Types.ObjectId;
+  author: Schema.Types.ObjectId[];
+  editor?: Schema.Types.ObjectId[];
   postContributor?: Schema.Types.ObjectId[];
   metaDescription: string;
   focusKeywords: string[];
@@ -21,6 +21,8 @@ export interface IPost extends Document {
   likes: Schema.Types.ObjectId[];
   comments: Schema.Types.ObjectId[];
   views: number;
+  ownContent: boolean;
+  stage: boolean
   coverImage: Schema.Types.ObjectId;
   featuredImage: Schema.Types.ObjectId[];
   featuredVideo: Schema.Types.ObjectId[];
@@ -36,9 +38,12 @@ export interface IPost extends Document {
   nextPost?: Schema.Types.ObjectId;
   previousPost?: Schema.Types.ObjectId;
   readTime: number;
-  version: Schema.Types.ObjectId[];
-  lastModifiedDate: Date;
-  publishDate?: Date;
+  version: {
+    versionId?: Schema.Types.ObjectId;
+    versionIndexList: number[];
+  };
+  lastModifiedDate: Date | number;
+  publishDate?: Date | number;
 }
 
 const postSchema = new Schema<IPost>(
@@ -50,8 +55,8 @@ const postSchema = new Schema<IPost>(
     slug: { type: String, unique: true, lowercase: true, trim: true },
     parentPost: { type: Schema.Types.ObjectId, ref: "Post", default: null },
     permalink: { type: String, unique: true, lowercase: true, trim: true },
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    editor: { type: Schema.Types.ObjectId, ref: "User" },
+    author: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+    editor: [{ type: Schema.Types.ObjectId, ref: "User" }],
     postContributor: [{ type: Schema.Types.ObjectId, ref: "User" }],
     metaDescription: { type: String, trim: true, maxlength: 160 },
     focusKeywords: [{ type: String, trim: true }],
@@ -97,10 +102,14 @@ const postSchema = new Schema<IPost>(
     nextPost: { type: Schema.Types.ObjectId, ref: "Page" },
     previousPost: { type: Schema.Types.ObjectId, ref: "Page" },
     readTime: { type: Number },
-    version: [{ type: Schema.Types.ObjectId, ref: "PostVersion" }],
+    version: {
+      versionId: { type: Schema.Types.ObjectId, ref: "PostVersion" },
+      versionIndexList: [{ type: Number }],
+    },
+    ownContent: {type: Boolean, dafault: false},
     views: { type: Number, default: 0 },
-    lastModifiedDate: { type: Date },
-    publishDate: { type: Date },
+    lastModifiedDate: { type: Number },
+    publishDate: { type: Number },
   },
   { timestamps: true }
 );

@@ -1,8 +1,18 @@
 import Post from "../../../models/post";
 import AuthRequest from "../../../types/authRequest";
-import { response, Response } from "express";
+import { Response } from "express";
 import { status } from "../../../utilities/enums/statusCode";
 import { IPost } from "../../../models/post";
+import { IPostVersion, PostVersion } from "../../../models/postVersioning";
+import {
+  createPostNewVersion,
+  CreatePostVersion,
+} from "./postVersion.ts/createPostVersion";
+import {
+  createStagedPost,
+  createStagedPostForAdmin,
+} from "./stagedPost/createStaged";
+
 const resStatus = status;
 
 // @desc    Update an existing post
@@ -20,6 +30,7 @@ export const updatePostHandler = async (
       content,
       keyTakeAway,
       summary,
+      slug,
       postContributor,
       metaDescription,
       parentPost,
@@ -28,9 +39,9 @@ export const updatePostHandler = async (
       tags,
       featuredImage,
       coverImage,
-      postOtherImages,
       featuredVideo,
       status,
+      stage,
       nextPost,
       previousPost,
       relatedPosts,
@@ -55,26 +66,49 @@ export const updatePostHandler = async (
         "rejected",
       ].includes(status)
     ) {
-      return res.status(resStatus.BadRequest).json({ message: "Invalid status provided." });
+      return res
+        .status(resStatus.BadRequest)
+        .json({ message: "Invalid status provided." });
     }
 
     // Fetch the post by ID
     const post = await Post.findById(id);
     if (!post) {
-      return res.status(resStatus.NotFound).json({ message: "Post not found." });
+      return res
+        .status(resStatus.NotFound)
+        .json({ message: "Post not found." });
     }
 
     // Authorization check: only admin, editor, author, or contributor can update the post
-    const allowedRoles = ["admin", "editor", "author"];
-    const isAuthorized =
-      allowedRoles.includes(user.role) ||
-      post.author.toString() === (user._id as string).toString() ||
-      post.postContributor?.toString() === (user._id as string).toString();
 
-    if (!isAuthorized) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to update this post." });
+    if (post.ownContent == false) {
+      const allowedRoles = [
+        "admin",
+        "author",
+        "contributor",
+        "editor",
+        "moderator",
+        "reviewer",
+        "subscriber",
+      ];
+      const isAuthorized = allowedRoles.includes(user.role);
+
+      if (!isAuthorized) {
+        return res
+          .status(resStatus.Unauthorized)
+          .json({ message: "You are not authorized to update this post." });
+      }
+    } else {
+      const allowedRolesForUpdates = ["admin", "editor"];
+      const isAuthorizedRole =
+        allowedRolesForUpdates.includes(user.role) ||
+        post.author.toString() === (user._id as string).toString();
+
+      if (!isAuthorizedRole) {
+        return res
+          .status(resStatus.Unauthorized)
+          .json({ message: "You are not authorized to update this post." });
+      }
     }
 
     // Check if user has permission to change the post status
@@ -95,28 +129,130 @@ export const updatePostHandler = async (
     }
 
     // Construct update data
-    let updateData = {
+    let updateData: Partial<IPost> = {
       title: title || post.title,
       content: content || post.content,
+      slug: slug || post.slug,
       keyTakeAway: keyTakeAway || post.keyTakeAway,
       summary: summary || post.summary,
       postContributor: postContributor || post.postContributor,
       metaDescription: metaDescription || post.metaDescription,
-      focuskeywords: focusKeywords || post.focusKeywords,
+      focusKeywords: focusKeywords || post.focusKeywords,
       parentPost: parentPost || post.parentPost,
       categories: categories || post.categories,
       tags: tags || post.tags,
       featuredImage: featuredImage || post.featuredImage,
       coverImage: coverImage || post.coverImage,
-      postOtherImages: postOtherImages || post.postOtherImages,
       featuredVideo: featuredVideo || post.featuredVideo,
       status: status,
       publishDate: status === "published" ? Date.now() : undefined,
+      lastModifiedDate: Date.now(),
       nextPost: nextPost || post.nextPost,
       previousPost: previousPost || post.previousPost,
       relatedPosts: relatedPosts || post.relatedPosts,
-      breadcrumbList,
+      breadcrumbList: breadcrumbList || post.breadcrumbList,
     };
+
+    //authorization check for staging: only admin, editor, and post orignial author update should not be staged
+    const stagedData: Partial<IPost> = {
+      title: title || undefined,
+      content: content || undefined,
+      summary: summary || undefined,
+      keyTakeAway: keyTakeAway || undefined,
+    };
+    const allowedRolesForStaging = [
+      "author",
+      "contributor",
+      "moderator",
+      "reviewer",
+      "subscriber",
+    ];
+    const isAuthorizedForStaging = allowedRolesForStaging.includes(user.role);
+    if (
+      isAuthorizedForStaging &&
+      !(post.author.toString() === (user._id as string).toString())
+    ) {
+      const stagePost = await createStagedPost(user, stagedData as IPost);
+      if (!stagePost) {
+        res
+          .status(resStatus.ServerError)
+          .json({ message: "unable to stage post for contribution" });
+      }
+      return res.status(resStatus.Success).json({
+        message: " contribution made succesfully",
+      });
+    }
+
+    // Authorization check for update: only admin, editor, and post orignial author can update the post
+    const allowedRolesForUpdates = ["admin", "editor"];
+    const isAuthorizedRole =
+      allowedRolesForUpdates.includes(user.role) ||
+      post.author.toString() === (user._id as string).toString();
+
+    if (!isAuthorizedRole) {
+      return res
+        .status(resStatus.Unauthorized)
+        .json({ message: "You are not authorized to update this post." });
+    }
+
+    //admin, editor and post author specific staging
+    if (isAuthorizedRole && stage == true) {
+      const createStagePost = await createStagedPostForAdmin(
+        user,
+        updateData as IPost
+      );
+      if (!createStagePost) {
+        return res
+          .status(resStatus.ServerError)
+          .json({ message: "unable to create a stages post" });
+      }
+      return res
+        .status(resStatus.Success)
+        .json({ message: "update staged successfully" });
+    }
+    if (updateData) {
+      // Check if the post has a version
+      const VersionAlreadyExist = await PostVersion.findOne({
+        postId: post._id,
+      });
+
+      if (!VersionAlreadyExist) {
+        const createVersion = await CreatePostVersion(post, user);
+        if (!createVersion) {
+          return res
+            .status(resStatus.ServerError)
+            .json({ message: "Error creating post version." });
+        }
+        updateData.version = {
+          versionId: createVersion.id,
+          versionIndexList: [
+            ...post.version.versionIndexList,
+            createVersion.versionList[createVersion.versionList.length - 1]
+              .version,
+          ],
+        };
+      }
+
+      const addNewVersion = await createPostNewVersion(
+        VersionAlreadyExist as IPostVersion,
+        post,
+        user
+      );
+
+      if (!addNewVersion) {
+        return res
+          .status(resStatus.ServerError)
+          .json({ message: "Error creating new post version." });
+      }
+
+      updateData.version = {
+        versionIndexList: [
+          ...post.version.versionIndexList,
+          addNewVersion.versionList[addNewVersion.versionList.length - 1]
+            .version,
+        ],
+      };
+    }
 
     // Update the post with new data
     const updatedPost = await Post.findByIdAndUpdate(id, updateData, {
@@ -132,12 +268,14 @@ export const updatePostHandler = async (
       .populate("previousPost", "postLink");
 
     // Return success response
-    return res.status(200).json({
+    return res.status(resStatus.Success).json({
       message: "Post updated successfully.",
       post: updatedPost,
     });
   } catch (error: any) {
     console.error("Error updating post:", error);
-    return res.status(500).json({ message: "Error updating post.", error });
+    return res
+      .status(resStatus.ServerError)
+      .json({ message: "Error updating post.", error });
   }
 };

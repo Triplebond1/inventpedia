@@ -44,7 +44,7 @@ export const updateUserHandler = async (
 
     // Authorization check: only admin or the user can update their data
     if (req.user?.role !== "admin" && req.user?.id !== userId) {
-      return res.status(status.accessDenied).json({ message: "Access denied" });
+      return res.status(status.AccessDenied).json({ message: "Access denied" });
     }
 
     // Password validation
@@ -77,7 +77,7 @@ export const updateUserHandler = async (
   } catch (error: any) {
     console.error("Error updating user:", error);
     return res
-      .status(status.serverError)
+      .status(status.ServerError)
       .json({ message: "Internal server error", error: error.message });
   }
 };

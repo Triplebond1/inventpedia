@@ -43,7 +43,7 @@ export const updateProfileHandler = async (
       user.role !== "admin"
     ) {
       return res
-        .status(status.accessDenied)
+        .status(status.AccessDenied)
         .json({ message: "You are not authorized to update this profile." });
     }
 
@@ -75,7 +75,7 @@ export const updateProfileHandler = async (
   } catch (error: any) {
     console.error("Error updating profile:", error);
     return res
-      .status(status.serverError)
+      .status(status.ServerError)
       .json({ message: "Error updating profile", error });
   }
 };

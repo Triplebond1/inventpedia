@@ -86,7 +86,7 @@ export const createUserHandler = async (
       });
   
       // Return success response
-     res.status(status.created).json({
+     res.status(status.Created).json({
         message: "User created successfully",
         user: <IUser>{
           id: user._id,
@@ -97,7 +97,7 @@ export const createUserHandler = async (
       });
     } catch (error) {
       console.error("Error creating user:", error);
-     res.status(status.serverError).json({
+     res.status(status.ServerError).json({
         message: "Internal server error",
         error: error instanceof Error ? error.message : "Unknown error",
      });

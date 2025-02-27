@@ -1,13 +1,13 @@
 export enum status {
   Success = 200,
-  created = 201,
+  Created = 201,
   Accepted = 202,
-  noContent = 204,
+  NoContent = 204,
   BadRequest = 400,
   Unauthorized = 401,
-  accessDenied = 403,
+  AccessDenied = 403,
   NotFound = 404,
-  serverError = 500,
+  ServerError = 500,
 }
 
 // 100	Continue – The server received the request headers and expects the body.

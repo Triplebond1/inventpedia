@@ -16,7 +16,7 @@ export const getAllProfileHandler = async (
     const allowedRoles: string[] = ["admin", "moderator"]; 
 
     if (!user?.role || !allowedRoles.includes(user.role)) {
-      return res.status(status.accessDenied).json({ message: "Access denied" });
+      return res.status(status.AccessDenied).json({ message: "Access denied" });
     }
     
     const profile = await Profile.find()
@@ -28,7 +28,7 @@ export const getAllProfileHandler = async (
   } catch (error: any) {
     console.error("Error fetching profiles:", error);
     return res
-      .status(status.serverError)
+      .status(status.ServerError)
       .json({ message: "Error fetching profiles", error });
   }
 };

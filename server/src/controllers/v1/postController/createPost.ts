@@ -28,8 +28,8 @@ export const createPostHandler = async (
       categories,
       tags,
       featuredImage,
+      ownContent,
       coverImage,
-      postOtherImages,
       featuredVideo,
       status,
       nextPost,
@@ -59,7 +59,7 @@ export const createPostHandler = async (
     // Check user role and handle subscriber-specific logic
     if (user?.role === "subscriber" || user?.role === "guest") {
       return res
-        .status(statusCode.accessDenied)
+        .status(statusCode.AccessDenied)
         .json({ message: "your are not eligible to create posts." });
     }
 
@@ -110,14 +110,18 @@ export const createPostHandler = async (
       tags: tags || null,
       featuredImage: featuredImage || null,
       coverImage: coverImage || null,
-      postOtherImages: postOtherImages || null,
       featuredVideo: featuredVideo || null,
       status: status,
       publishDate: status === "published" ? Date.now() : null,
-      nextPost,
-      previousPost,
-      relatedPosts,
-      breadcrumbList,
+      version: {
+        versionIndexList: [1],
+      },
+      owncontent: ownContent || false,
+      lastModifiedDate: Date.now(),
+      nextPost: nextPost || null,
+      previousPost: previousPost || null,
+      relatedPosts: relatedPosts || null,
+      breadcrumbList: breadcrumbList || null,
     });
 
     // Update schemaMarkup
@@ -128,12 +132,12 @@ export const createPostHandler = async (
     // Run validation before saving
 
     // Respond with the newly created post
-    return res.status(statusCode.created).json(savedPost);
+    return res.status(statusCode.Created).json(savedPost);
     
   } catch (error: any) {
     console.error("Error creating post:", error);
     return res
-      .status(statusCode.serverError)
+      .status(statusCode.ServerError)
       .json({ message: "Error creating post", error });
   }
 };

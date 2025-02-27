@@ -43,7 +43,7 @@ export const createProfileHandler = async (
 
     if (user.role === "subscriber") {
       return res
-        .status(status.accessDenied)
+        .status(status.AccessDenied)
         .json({ message: "You are not authorized to create a profile." });
     }
 
@@ -63,14 +63,14 @@ export const createProfileHandler = async (
 
     await newProfile.save();
 
-    return res.status(status.created).json({
+    return res.status(status.Created).json({
       message: "Profile created successfully.",
       profile: newProfile.toJSON(),
     });
   } catch (error: any) {
     console.error("Error creating profile:", error);
     return res
-      .status(status.serverError)
+      .status(status.ServerError)
       .json({ message: "Error creating profile", error: error.message });
   }
 };

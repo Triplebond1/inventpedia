@@ -13,7 +13,7 @@ export const deleteUserHandler = async (req:AuthRequest, res:Response): Promise<
 
     // Authorization: Only admin can delete users
     if (req.user?.role !== "admin") {
-      return res.status(status.accessDenied).json({ message: "Access denied" });
+      return res.status(status.AccessDenied).json({ message: "Access denied" });
     }
 
     // Find the user by ID
@@ -32,7 +32,7 @@ export const deleteUserHandler = async (req:AuthRequest, res:Response): Promise<
     return res.status(status.Success).json({ message: "User deleted successfully" });
   } catch (error: any) {
     // Internal server error response
-    return res.status(status.serverError).json({
+    return res.status(status.ServerError).json({
       message: "Internal server error",
       error: error.message,
     });

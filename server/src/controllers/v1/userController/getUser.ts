@@ -35,7 +35,7 @@ export const getUserHandler = async (
     return res.status(status.Success).json(user);
   } catch (error) {
     return res
-      .status(status.serverError)
+      .status(status.ServerError)
       .json({ message: "Internal server error", error });
   }
 };

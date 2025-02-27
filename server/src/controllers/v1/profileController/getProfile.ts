@@ -27,6 +27,6 @@ export const getProfileHandler = async (req: AuthRequest, res:Response): Promise
     return res.status(status.Success).json({ profile });
   } catch (error:any) {
     console.error("Error fetching profiles:", error);
-    return res.status(status.serverError).json({ message: "Error fetching profiles", error });
+    return res.status(status.ServerError).json({ message: "Error fetching profiles", error });
   }
 };

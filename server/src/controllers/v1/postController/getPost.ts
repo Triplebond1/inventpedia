@@ -38,6 +38,6 @@ export const getAPostHandler = async (req: AuthRequest, res: Response): Promise<
     return res.status(status.Success).json(post);
   } catch (error: any) {
     console.error("Error fetching post:", error);
-    return res.status(status.serverError).json({ message: "Error fetching post", error });
+    return res.status(status.ServerError).json({ message: "Error fetching post", error });
   }
 };

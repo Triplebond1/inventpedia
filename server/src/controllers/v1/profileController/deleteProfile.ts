@@ -35,6 +35,6 @@ export const deleteProfileHandler = async (req: AuthRequest, res: Response): Pro
     return res.status(status.Success).json({ message: "Profile deleted successfully" });
   } catch (error: any) {
     console.error("Error deleting profile:", error);
-    return res.status(status.serverError).json({ message: "Error deleting profile", error });
+    return res.status(status.ServerError).json({ message: "Error deleting profile", error });
   }
 };

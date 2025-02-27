@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
 // Post versioning schema
-interface IPostVersion extends Document  {
+export interface IPostVersion extends Document {
   postId: Schema.Types.ObjectId;
   versionList: {
     version: number;
@@ -13,8 +13,8 @@ interface IPostVersion extends Document  {
     slug: string;
     parentPost?: Schema.Types.ObjectId;
     permalink: string;
-    author: Schema.Types.ObjectId;
-    editor?: Schema.Types.ObjectId;
+    author: Schema.Types.ObjectId[];
+    editor?: Schema.Types.ObjectId[];
     postContributor?: Schema.Types.ObjectId[];
     metaDescription: string;
     focusKeywords: string[];
@@ -28,7 +28,12 @@ interface IPostVersion extends Document  {
 
 const postVersionSchema = new Schema<IPostVersion>(
   {
-    postId: { type: Schema.Types.ObjectId, ref: "Post", required: true, index: true  },
+    postId: {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+      required: true,
+      index: true,
+    },
     versionList: [
       {
         version: { type: Number, required: true },
@@ -47,6 +52,8 @@ const postVersionSchema = new Schema<IPostVersion>(
         postContributor: [{ type: Schema.Types.ObjectId, ref: "User" }],
         metaDescription: { type: String, trim: true, maxlength: 160 },
         focusKeywords: [{ type: String, trim: true }],
+        author: [{ type: Schema.Types.ObjectId, ref: "User" }],
+        editor: [{ type: Schema.Types.ObjectId, ref: "User" }],
         coverImage: {
           type: Schema.Types.ObjectId,
           ref: "Image",

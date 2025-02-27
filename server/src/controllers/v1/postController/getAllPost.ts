@@ -44,7 +44,7 @@ export const getAllPostsHandler = async (req: AuthRequest, res: Response): Promi
       return res.status(resStatus.Success).json(posts);
     } catch (error: any) {
       console.error("Error fetching posts:", error);
-      return res.status(resStatus.serverError).json({ message: "Error fetching posts", error });
+      return res.status(resStatus.ServerError).json({ message: "Error fetching posts", error });
     }
   };
   

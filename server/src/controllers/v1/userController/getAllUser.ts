@@ -10,7 +10,7 @@ export const getAllUsersHandler = async (req:AuthRequest, res:Response) : Promis
   try {
     // Only admin can access
     if ( req.user?.role !== "admin") {
-        return res.status(status.accessDenied).json({ message: "Access denied" });
+        return res.status(status.AccessDenied).json({ message: "Access denied" });
         
     }
 
@@ -20,7 +20,7 @@ export const getAllUsersHandler = async (req:AuthRequest, res:Response) : Promis
     return res.status(status.Success).json(users);
      
   } catch (error) {
-    return res.status(status.serverError).json({ message: "Internal server error", error });
+    return res.status(status.ServerError).json({ message: "Internal server error", error });
       
   }
 };
