@@ -74,7 +74,7 @@ const postSchema = new Schema<IPost>(
     },
     categories: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
-    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    likes: [{ type: Schema.Types.ObjectId, ref: "PostLike" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     coverImage: {
       type: Schema.Types.ObjectId,

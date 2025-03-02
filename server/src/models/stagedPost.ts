@@ -60,8 +60,7 @@ const stagedPostSchema = new Schema<IStagedPost>(
       type: String,
       enum: [
         "draft",
-        "published",
-        "archived",
+        "merged",
         "review",
         "reviewed",
         "rejected",

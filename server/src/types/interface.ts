@@ -34,3 +34,13 @@ export interface versionLIst {
   schemaMarkup: Record<string, unknown>;
   createdAt: Date | number;
 }
+
+export interface commentList {
+        author: unknown;
+        parentCommentAuthor?: unknown | null;
+        content: string;
+        likes?: unknown[];
+        status: string;
+        createdAt?: Date | number;
+        updatedAt?: Date | number;
+}

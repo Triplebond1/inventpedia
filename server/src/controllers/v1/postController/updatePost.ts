@@ -7,11 +7,11 @@ import { IPostVersion, PostVersion } from "../../../models/postVersioning";
 import {
   createPostNewVersion,
   CreatePostVersion,
-} from "../../../service/postService/postVersion/createPostVersion";
+} from "../../../service/postVersion/createPostVersion";
 import {
   createStagedPost,
   createStagedPostForAdmin,
-} from "../../../service/postService/stagedPost/createStaged";
+} from "../../../service/stagedPost/createStaged";
 
 const resStatus = status;
 

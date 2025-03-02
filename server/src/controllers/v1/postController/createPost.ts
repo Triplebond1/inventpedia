@@ -5,6 +5,10 @@ import Category from "../../../models/category";
 import { status } from "../../../utilities/enums/statusCode";
 import Tag from "../../../models/tag";
 import { populateSchemaMarkup } from "../../../utilities/helpers/schemaMarkUp";
+import {
+  validateField,
+  validateRequiredField,
+} from "../../../utilities/helpers/validateField";
 
 const statusCode = status;
 // @desc    Create a new post
@@ -47,11 +51,25 @@ export const createPostHandler = async (
     }
 
     // Validate required fields
-    if (!title || !content) {
-      return res
-        .status(statusCode.BadRequest)
-        .json({ message: "Title and content, are required." });
-    }
+    validateRequiredField(title, "Title", "string");
+    validateRequiredField(content, "Content", "string");
+
+    //validate fields
+    validateField(keyTakeAway, "Key Take Away", "string");
+    validateField(summary, "Summary", "string");
+    validateField(slug, "Slug", "string");
+    validateField(postContributor, "Post Contributor", "string");
+    validateField(metaDescription, "Meta Description", "string");
+    validateField(parentPost, "Parent Post", "string");
+    validateField(focusKeywords, "Focus Keywords", "string");
+    validateField(featuredImage, "Featured Image", "string");
+    validateField(coverImage, "Cover Image", "string");
+    validateField(featuredVideo, "Featured Video", "string");
+    validateField(status, "Status", "string");
+    validateField(nextPost, "Next Post", "string");
+    validateField(previousPost, "Previous Post", "string");
+    validateField(relatedPosts, "Related Posts", "string");
+    validateField(breadcrumbList, "Breadcrumb List", "string");
 
     title = title.toLowerCase();
     content = content.toLowerCase();
@@ -133,7 +151,6 @@ export const createPostHandler = async (
 
     // Respond with the newly created post
     return res.status(statusCode.Created).json(savedPost);
-    
   } catch (error: any) {
     console.error("Error creating post:", error);
     return res

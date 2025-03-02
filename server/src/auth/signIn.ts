@@ -4,6 +4,11 @@ import User, { IUser } from "../models/user";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { JwtPayload } from "../types/interface";
+import {
+  validateEmail,
+  validatePassword,
+  validateRequiredField,
+} from "../utilities/helpers/validateField";
 
 dotenv.config();
 
@@ -27,14 +32,11 @@ export const logInUserHandler = async (
       return;
     }
 
-    if (!password || typeof password !== "string") {
-      res.status(400).json({ message: "Password should be a string" });
-      return;
-    }
-
+    validateRequiredField(password, "password", "string");
+    validatePassword(password);
     usernameOrEmail = usernameOrEmail.toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValidEmail = emailRegex.test(usernameOrEmail);
+
+    const isValidEmail = validateEmail(usernameOrEmail);
 
     const query: { email?: string; username?: string } = isValidEmail
       ? { email: usernameOrEmail }

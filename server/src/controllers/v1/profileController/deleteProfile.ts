@@ -2,6 +2,7 @@ import Profile from "../../../models/profile";
 import AuthRequest from "../../../types/authRequest";
 import { Response } from "express";
 import { status } from "../../../utilities/enums/statusCode";
+import { validateRequiredField } from "../../../utilities/helpers/validateField";
 
 
 // @desc    Delete a profile
@@ -15,6 +16,8 @@ export const deleteProfileHandler = async (req: AuthRequest, res: Response): Pro
     if (!user) {
       return res.status(status.Unauthorized).json({ message: "User is not authenticated" });
     }
+
+    validateRequiredField(id, "Profile ID", "string")
 
     const profile = await Profile.findById(id);
     if (!profile) {
@@ -31,7 +34,10 @@ export const deleteProfileHandler = async (req: AuthRequest, res: Response): Pro
         .json({ message: "You are not authorized to delete this profile." });
     }
 
-    await profile.deleteOne();
+    const deleted = await profile.deleteOne();
+    if (!deleted) {
+      return res.status(status.ServerError).json({message:"unable to delete profile"})
+    }
     return res.status(status.Success).json({ message: "Profile deleted successfully" });
   } catch (error: any) {
     console.error("Error deleting profile:", error);

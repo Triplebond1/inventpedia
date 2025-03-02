@@ -3,6 +3,7 @@ import { Response } from "express";
 import AuthRequest from "../../../types/authRequest";
 import { IProfile } from "../../../models/profile";
 import { status } from "../../../utilities/enums/statusCode";
+import { validateField } from "../../../utilities/helpers/validateField";
 
 // @desc    Create a new profile
 // @route   POST /v1/api/profiles
@@ -33,6 +34,17 @@ export const createProfileHandler = async (
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
     }
+
+    validateField(fullName, "Full Name", "string");
+    validateField(website, "Website", "string");
+    validateField(inventpediaPage, "Inventpedia Page", "string");
+    validateField(location, "Location", "string");
+    validateField(bio, "Bio", "string");
+    validateField(social.facebook, "social facebook", "string");
+    validateField(social.twitter, "social twitter", "string");
+    validateField(social.linkedin, "social linkedin", "string");
+    validateField(social.instagram, "social instagram", "string");
+
     // Check if profile already exists for the user
     const existingProfile = await Profile.findOne({ userEmail: userId });
     if (existingProfile) {

@@ -4,6 +4,7 @@ import { Response } from "express";
 import AuthRequest from "../../../types/authRequest";
 import { status } from "../../../utilities/enums/statusCode";
 import { IUser } from "../../../models/user";
+import { validateField } from "../../../utilities/helpers/validateField";
 
 // @desc    Update an existing user
 // @route   PUT /v1/api/users/:id
@@ -17,19 +18,11 @@ export const updateUserHandler = async (
     let { username, email, password, role }: IUser = req.body;
 
     // Validate input fields
-    const validateStringField = (field: string, fieldName: string) => {
-      if (field && typeof field !== "string") {
-        return res
-          .status(status.BadRequest)
-          .json({ message: `${fieldName} should be a string` });
-      }
-      return;
-    };
-
-    validateStringField(username, "Username");
-    validateStringField(email, "Email");
-    validateStringField(password, "Password");
-    validateStringField(role, "Role");
+    validateField(username, "Username", "string");
+    validateField(email, "Email", "string");
+    validateField(password, "Password", "string");
+    validateField(role, "Role", "string");
+    validateField(userId, "user ID", "string")
 
     // Convert fields to lowercase where necessary
     username ? username.toLowerCase() : null;
@@ -40,6 +33,10 @@ export const updateUserHandler = async (
 
     if (!user) {
       return res.status(status.NotFound).json({ message: "User not found" });
+    }
+
+    if (!userId) {
+      return res.status(status.BadRequest).json({message: "ID is required"})
     }
 
     // Authorization check: only admin or the user can update their data

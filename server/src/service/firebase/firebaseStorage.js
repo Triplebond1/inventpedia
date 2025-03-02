@@ -1,4 +1,4 @@
-import bucket from "../firebase/firebaseConfig"; // Import configured Firebase bucket
+import bucket from "../../utilities/firebase/firebaseConfig"; // Import configured Firebase bucket
 
 // Function upload the image to Firebase
 const uploadImageToFirebase = async (fileName, mainImageBuffer) => {

@@ -2,6 +2,7 @@ import Profile, { IProfile } from "../../../models/profile";
 import { Response } from "express";
 import AuthRequest from "../../../types/authRequest";
 import { status } from "../../../utilities/enums/statusCode";
+import { validateField } from "../../../utilities/helpers/validateField";
 
 // @desc    Update a profile
 // @route   PUT /v1/api/profiles/:id
@@ -31,6 +32,19 @@ export const updateProfileHandler = async (
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
     }
+    
+    if (!id) {
+      return res.status(status.BadRequest).json({message: "ID is required"})
+    }
+
+    validateField(userName, "User Name", "string");
+    validateField(userEmail, "User Email", "string");
+    validateField(userRole, "User Role", "string");
+    validateField(profilePicture, "Profile Picture", "string");
+    validateField(website, "Website", "string");
+    validateField(inventpediaPage, "Inventpedia Page", "string");
+    validateField(location, "Location", "string");
+    validateField(bio, "Bio", "string");
 
     const profile = await Profile.findById(id);
     if (!profile) {

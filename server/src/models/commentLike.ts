@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface ILike extends Document {
-    post: mongoose.Types.ObjectId;
+export interface ICommentLike extends Document {
+    comment: mongoose.Types.ObjectId;
     likeList: {
         user: mongoose.Types.ObjectId;
         status: string;
@@ -12,11 +12,11 @@ interface ILike extends Document {
     updatedAt: Date;
 }
 
-const likeSchema = new Schema<ILike>(
+const commentLikeSchema = new Schema<ICommentLike>(
     {
-        post: { 
+        comment: { 
             type: Schema.Types.ObjectId, 
-            ref: "Post", 
+            ref: "Comment", 
             required: true,
             index: true // Index for faster queries
         },
@@ -43,7 +43,7 @@ const likeSchema = new Schema<ILike>(
 );
 
 // Ensure a user can only like/dislike a post once
-likeSchema.index({ post: 1, "likeList.user": 1 }, { unique: true });
+commentLikeSchema.index({ post: 1, "likeList.user": 1 }, { unique: true });
 
-const Like: Model<ILike> = mongoose.model<ILike>("Like", likeSchema);
-export default Like;
+const CommentLike: Model<ICommentLike> = mongoose.model<ICommentLike>("Like", commentLikeSchema);
+export default CommentLike;

@@ -1,0 +1,38 @@
+import Tag from "../../../models/tag";
+import AuthRequest from "../../../types/authRequest";
+import { Response } from "express";
+import { status } from "../../../utilities/enums/statusCode";
+import { validateField } from "../../../utilities/helpers/validateField";
+
+// @desc    Delete a tag
+// @route   DELETE /v1/api/tag/:id
+// @access  Private (Admin, editor)
+export const deleteTagHandler = async (req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const { id } = req.params;
+        const user = req.user;
+
+        if (!user) {
+            return res.status(status.Unauthorized).json({ message: "User is not authenticated" });
+        }
+
+        validateField(id, "Tag ID", "string")
+      
+        // Authorization check: only admin, and editor can update a tag
+        if (user.role !== "admin" && user.role !== "editor") {
+            return res
+                .status(status.AccessDenied)
+                .json({ message: "You are not authorized to delete a tag" });
+        }
+
+        const deletedTag = await Tag.findByIdAndDelete(id);
+
+        if (!deletedTag) {
+            return res.status(status.NotFound).json({ message: "Tag not found" });
+        }
+
+        return res.status(status.Success).json({ message: "Tag deleted successfully" });
+    } catch (error: any) {
+        return res.status(status.ServerError).json({ message: "Error deleting tag", error });
+    }
+};

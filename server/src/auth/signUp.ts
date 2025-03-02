@@ -5,6 +5,7 @@ import { Response } from "express";
 import AuthRequest from "../types/authRequest";
 import { status } from "../utilities/enums/statusCode";
 import { IUser } from "../models/user";
+import { validateEmail, validatePassword, validateRequiredField } from "../utilities/helpers/validateField";
 
 
 // @desc    Create a new user
@@ -18,26 +19,10 @@ export const createUserHandler = async (
     try {
       let { username, email, password, role }: IUser = req.body;
   
-      // Helper function to validate required fields
-      const validateField = (field: string, fieldName: string): boolean => {
-        if (!field || typeof field !== "string") {
-          res
-            .status(status.BadRequest)
-            .json({ message: `${fieldName} should be a valid string` });
-          return false; // Stop execution
-        }
-        return true;
-      };
-  
-      // Validate fields
-      if (
-        !validateField(username, "Username") ||
-        !validateField(email, "Email") ||
-        !validateField(password, "Password")
-      ) {
-        return; // Stop execution if validation fails
-      }
-  
+      validateRequiredField(username, "username", "string")
+      validateRequiredField(email, "email", "string")
+      validateRequiredField(password, "password", "string")
+
       // Convert username and email to lowercase
       username = username.toLowerCase();
       email = email.toLowerCase();
@@ -54,19 +39,14 @@ export const createUserHandler = async (
       } else {
         role = "subscriber";
       }
-  
+
+      //email validation
+      validateEmail(email)
       // Password validation: At least 8 characters, 1 uppercase, 1 lowercase, 1 number
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (!passwordRegex.test(password)) {
-        res.status(status.BadRequest).json({
-          message:
-            "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one number.",
-        });
-        return;
-      }
+      validatePassword(password)
   
       // Check if user already exists
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ email: email });
       if (existingUser) {
         res
           .status(status.BadRequest)

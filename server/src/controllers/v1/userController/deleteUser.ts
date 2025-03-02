@@ -2,6 +2,7 @@ import User from "../../../models/user";
 import { Response } from "express";
 import AuthRequest from "../../../types/authRequest";
 import { status } from "../../../utilities/enums/statusCode";
+import { validateField } from "../../../utilities/helpers/validateField";
 
 
 // @desc    Delete a user
@@ -10,6 +11,8 @@ import { status } from "../../../utilities/enums/statusCode";
 export const deleteUserHandler = async (req:AuthRequest, res:Response): Promise<Response> => {
   try {
     const userId = req.params.id;
+    
+    validateField(userId, "user ID", "string")
 
     // Authorization: Only admin can delete users
     if (req.user?.role !== "admin") {

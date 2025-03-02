@@ -2,6 +2,7 @@ import Post from "../../../models/post";
 import AuthRequest from "../../../types/authRequest";
 import { Response } from "express";
 import { status } from "../../../utilities/enums/statusCode";
+import { validateRequiredField } from "../../../utilities/helpers/validateField";
 
 // @desc    Delete a post
 // @route   DELETE /v1/api/post/:id
@@ -14,6 +15,8 @@ export const deletePostHandler = async (req: AuthRequest, res: Response) => {
     if (!user) {
       return res.status(status.Unauthorized).json({ message: "User is not authenticated" });
     }
+
+    validateRequiredField(id, "Post ID", "string");
 
     // Find the post to delete
     const post = await Post.findById(id);
