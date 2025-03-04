@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 // Connect to MongoDB (if using)
-const db = connectDB();
+//const db = connectDB();
 
 // Serve Next.js frontend (only if needed)
 app.use(express.static(path.join(__dirname, "../../frontend/.next")));

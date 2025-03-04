@@ -10,16 +10,17 @@ import { validateRequiredField } from "../../../utilities/helpers/validateField"
 export const updateTagHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { name } = req.body;
     const user = req.user;
 
     if (!user) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
+      return;
     }
 
     validateRequiredField(id, "Tag ID", "string");
@@ -28,21 +29,25 @@ export const updateTagHandler = async (
 
     // Authorization check: only admin, and editor can update a tag
     if (user.role !== "admin" && user.role !== "editor") {
-      return res
+      res
         .status(status.AccessDenied)
         .json({ message: "You are not authorized to update a tag" });
+      return;
     }
 
     const updatedTag = await Tag.findByIdAndUpdate(id, { name }, { new: true });
 
     if (!updatedTag) {
-      return res.status(status.NotFound).json({ message: "Tag not found" });
+      res.status(status.NotFound).json({ message: "Tag not found" });
+      return;
     }
 
-    return res.status(status.Success).json(updatedTag);
+    res.status(status.Success).json(updatedTag);
+    return;
   } catch (error: any) {
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error updating tag", error });
+    return;
   }
 };

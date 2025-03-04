@@ -13,21 +13,23 @@ import {
 export const createCategoryHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { name, description } = req.body;
     const user = req.user;
 
     if (!user) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
+      return;
     }
     // Authorization check: only admin, and editor can create a category
     if (user.role !== "admin" && user.role !== "editor") {
-      return res
+      res
         .status(status.AccessDenied)
         .json({ message: "You are not authorized to create a category" });
+      return;
     }
 
     // Check if name is provided
@@ -37,22 +39,23 @@ export const createCategoryHandler = async (
     const categoryAlreadyExist = await Category.findOne({ name: name });
 
     if (categoryAlreadyExist) {
-      return res
-        .status(status.BadRequest)
-        .json({ message: "category already exist" });
+      res.status(status.BadRequest).json({ message: "category already exist" });
+      return;
     }
 
     // Create a new category
     const newCategory = new Category({ name, description });
     const savedCategory = await newCategory.save();
 
-    return res.status(status.Created).json({
+    res.status(status.Created).json({
       message: "Category created successfully",
       category: savedCategory,
     });
+    return;
   } catch (error: any) {
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error creating category", error });
+    return;
   }
 };

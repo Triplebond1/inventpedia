@@ -1,16 +1,9 @@
 // import express from "express";
 // const router = express.Router();
-// import { validateToken } from "../../middlewares/v1/auth";
+// import validateToken  from "../../middlewares/v1/auth";
 // import { authorize } from "../../middlewares/v1/authorize";
-// import {
-//   createCommentHandler,
-//   updateCommentStatusHandler,
-//   getCommentByIdHandler,
-//   getCommentsByPostHandler,
-//   getAllCommentsHandler,
-//   updateCommentHandler,
-//   deleteCommentHandler,
-// } from "../../controllers/v1/commentController";
+// import { createCommentHandler } from "../../controllers/v1/commentController/createComment";
+
 
 
 // // @desc    Create a new comments

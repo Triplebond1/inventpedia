@@ -75,7 +75,7 @@ export const createUserHandler = async (
           role: user.role,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating user:", error);
      res.status(status.ServerError).json({
         message: "Internal server error",

@@ -9,6 +9,7 @@ import {
   validatePassword,
   validateRequiredField,
 } from "../utilities/helpers/validateField";
+import { status } from "../utilities/enums/statusCode";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ export const logInUserHandler = async (
 
     if (!usernameOrEmail || typeof usernameOrEmail !== "string") {
       res
-        .status(400)
+        .status(status.BadRequest)
         .json({ message: "Provide either a valid email or username" });
       return;
     }
@@ -44,13 +45,17 @@ export const logInUserHandler = async (
 
     const user = await User.findOne(query);
     if (!user) {
-      res.status(400).json({ message: `User ${usernameOrEmail} not found` });
+      res
+        .status(status.NotFound)
+        .json({ message: `User ${usernameOrEmail} not found` });
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(400).json({ message: "Invalid email or password" });
+      res
+        .status(status.BadRequest)
+        .json({ message: "Invalid email or password" });
       return;
     }
 
@@ -78,13 +83,15 @@ export const logInUserHandler = async (
       maxAge: 60 * 60 * 24 * 7 * 1000,
     });
 
-    res.status(200).json({
+    res.status(status.Success).json({
       message: "Logged in successfully",
       user: userData,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error", error });
+    res
+      .status(status.ServerError)
+      .json({ message: "Internal server error", error });
     return;
   }
 };

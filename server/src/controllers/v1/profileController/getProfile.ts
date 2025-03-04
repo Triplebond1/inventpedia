@@ -10,11 +10,11 @@ import { validateRequiredField } from "../../../utilities/helpers/validateField"
 export const getProfileHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
-    validateRequiredField(id, "Profile ID", "string")
+    validateRequiredField(id, "Profile ID", "string");
 
     const profile = await Profile.findById(id)
       .populate("userName", "username")
@@ -22,14 +22,17 @@ export const getProfileHandler = async (
       .populate("userRole", "role");
 
     if (!profile) {
-      return res.status(status.NotFound).json({ message: "Profile not found" });
+      res.status(status.NotFound).json({ message: "Profile not found" });
+      return;
     }
 
-    return res.status(status.Success).json({ profile });
+    res.status(status.Success).json({ profile });
+    return;
   } catch (error: any) {
     console.error("Error fetching profiles:", error);
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error fetching profiles", error });
+    return;
   }
 };

@@ -9,22 +9,22 @@ import { Response } from "express";
 export const getAllCategoriesHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const categories = await Category.find();
     if (!categories) {
-      return res
+      res
         .status(status.ServerError)
         .json({ message: "unable to get all categories" });
+      return;
     } else if (categories.length === 0) {
-      return res
-        .status(status.NoContent)
-        .json({ message: "no category exist yet" });
+      res.status(status.NoContent).json({ message: "no category exist yet" });
+      return;
     }
-    return res.status(status.Success).json(categories);
+    res.status(status.Success).json(categories);
+    return;
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error fetching categories", error });
+    res.status(500).json({ message: "Error fetching categories", error });
+    return;
   }
 };

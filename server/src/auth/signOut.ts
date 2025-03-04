@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { status } from "../utilities/enums/statusCode";
 
 export const logOutUserHandler = async (req: Request, res: Response):Promise<void> => {
   try {
@@ -10,10 +11,10 @@ export const logOutUserHandler = async (req: Request, res: Response):Promise<voi
       expires: new Date(0), // Expire the cookie immediately
     });
 
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(status.Success).json({ message: "Logged out successfully" });
     return;
   } catch (error: any) {
-    res.status(500).json({ message: "Logout failed", error: error.message });
+    res.status(status.ServerError).json({ message: "Logout failed", error: error.message });
     return;
   }
 };

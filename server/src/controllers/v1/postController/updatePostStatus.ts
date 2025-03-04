@@ -11,14 +11,17 @@ const resStatus = status;
 export const updatePostStatusHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     let { postId, status } = req.body;
 
     const user = req.user;
 
     if (!user) {
-      return res.status(resStatus.Unauthorized).json({ message: "User is not authenticated" });
+      res
+        .status(resStatus.Unauthorized)
+        .json({ message: "User is not authenticated" });
+      return;
     }
     // Check if the status is valid
     if (
@@ -31,14 +34,18 @@ export const updatePostStatusHandler = async (
         "rejected",
       ].includes(status)
     ) {
-      return res.status(resStatus.BadRequest).json({ message: "Invalid status provided." });
+      res
+        .status(resStatus.BadRequest)
+        .json({ message: "Invalid status provided." });
+      return;
     }
 
     // Fetch the post by ID
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(resStatus.NotFound).json({ message: "post not found." });
+      res.status(resStatus.NotFound).json({ message: "post not found." });
+      return;
     }
 
     // Authorization check: only admin, editor and author can update post status
@@ -47,9 +54,10 @@ export const updatePostStatusHandler = async (
       !allowedRoles.includes(user.role) ||
       post.author.toString() !== (user?._id as string).toString()
     ) {
-      return res
+      res
         .status(resStatus.AccessDenied)
         .json({ message: "You do not have permission to update post status" });
+      return;
     }
 
     // Check if user has permission to change the post status from current status
@@ -73,10 +81,12 @@ export const updatePostStatusHandler = async (
     post.status = status;
     await post.save();
 
-    return res.status(resStatus.Accepted).json({ message: `post ${status}`, post });
+    res.status(resStatus.Accepted).json({ message: `post ${status}`, post });
+    return;
   } catch (error: any) {
-    return res
+    res
       .status(resStatus.ServerError)
       .json({ message: "Error updating post status", error });
+    return;
   }
 };

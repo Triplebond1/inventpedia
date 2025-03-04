@@ -9,6 +9,6 @@ export const getStageHandler = async(stagedId: string): Promise<IStagedPost> => 
     const staged = await StagedPost.findById(stagedId) as IStagedPost;
     return staged;
   } catch (error: any) {
-    return error;
+    throw error;
   }
 };

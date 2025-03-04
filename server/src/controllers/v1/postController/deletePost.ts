@@ -13,7 +13,8 @@ export const deletePostHandler = async (req: AuthRequest, res: Response) => {
     const user = req.user;
 
     if (!user) {
-      return res.status(status.Unauthorized).json({ message: "User is not authenticated" });
+      res.status(status.Unauthorized).json({ message: "User is not authenticated" });
+      return;
     }
 
     validateRequiredField(id, "Post ID", "string");
@@ -22,7 +23,8 @@ export const deletePostHandler = async (req: AuthRequest, res: Response) => {
     const post = await Post.findById(id);
 
     if (!post) {
-      return res.status(status.NotFound).json({ message: "Post not found" });
+      res.status(status.NotFound).json({ message: "Post not found" });
+      return;
     }
 
       // Check if the user is an admin, editor, or the author of the post
@@ -30,17 +32,20 @@ export const deletePostHandler = async (req: AuthRequest, res: Response) => {
     if ( !allowedRoles.includes(user.role) ||
       post.author.toString() !== (user?._id as string).toString()
     ) {
-      return res
+       res
         .status(status.AccessDenied)
         .json({ message: "You do not have permission to delete this post" });
+        return;
     }
 
     // Delete the post
     await post.deleteOne();
 
     res.status(status.Success).json({ message: "Post deleted successfully" });
+    return;
   } catch (error: any) {
     console.error("Error deleting post:", error);
     res.status(status.ServerError).json({ message: "Error deleting post", error });
+    return;
   }
 };

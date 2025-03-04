@@ -13,17 +13,20 @@ import {
 export const updateCategoryHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { name, description } = req.body;
     const user = req.user;
 
     if (!user) {
-      return res.status(status.Unauthorized).json({ message: "User is not authenticated" });
+      res
+        .status(status.Unauthorized)
+        .json({ message: "User is not authenticated" });
+      return;
     }
 
-    validateRequiredField(id, "Category ID", "string")
+    validateRequiredField(id, "Category ID", "string");
     validateField(name, "Category name", "string");
     validateField(description, "Category description", "string");
 
@@ -32,16 +35,18 @@ export const updateCategoryHandler = async (
     const allowedRoles: string[] = ["admin", "editor"];
 
     if (!allowedRoles.includes(user.role)) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "You are not authorized to update a category" });
+      return;
     }
 
     // Check if name is provided
     if (!name && !description) {
-      return res
+      res
         .status(status.BadRequest)
         .json({ message: "Category name or description is required" });
+      return;
     }
 
     // Update category
@@ -52,14 +57,19 @@ export const updateCategoryHandler = async (
     );
 
     if (!updatedCategory) {
-      return res.status(status.NotFound).json({ message: "Category not found" });
+      res.status(status.NotFound).json({ message: "Category not found" });
+      return;
     }
 
-    return res.status(status.Success).json({
+    res.status(status.Success).json({
       message: "Category updated successfully",
       category: updatedCategory,
     });
+    return;
   } catch (error: any) {
-    return res.status(status.ServerError).json({ message: "Error updating category", error });
+    res
+      .status(status.ServerError)
+      .json({ message: "Error updating category", error });
+    return;
   }
 };

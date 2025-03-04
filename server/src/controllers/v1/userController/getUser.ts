@@ -9,7 +9,7 @@ import { validateField } from "../../../utilities/helpers/validateField";
 export const getUserHandler = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+) => {
   try {
     const userId = req.params.id;
 
@@ -24,14 +24,17 @@ export const getUserHandler = async (
     const user = await User.findById(userId).select("-password");
 
     if (!user) {
-      return res.status(status.NotFound).json({ message: "User not found" });
+      res.status(status.NotFound).json({ message: "User not found" });
+      return;
     }
 
     // Return the user data
-    return res.status(status.Success).json(user);
+    res.status(status.Success).json(user);
+    return;
   } catch (error) {
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Internal server error", error });
+      return;
   }
 };

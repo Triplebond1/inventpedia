@@ -10,7 +10,7 @@ import { validateField } from "../../../utilities/helpers/validateField";
 export const updateProfileHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     let {
@@ -28,13 +28,15 @@ export const updateProfileHandler = async (
     const user = req.user;
 
     if (!user) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
+      return;
     }
-    
+
     if (!id) {
-      return res.status(status.BadRequest).json({message: "ID is required"})
+      res.status(status.BadRequest).json({ message: "ID is required" });
+      return;
     }
 
     validateField(userName, "User Name", "string");
@@ -48,7 +50,8 @@ export const updateProfileHandler = async (
 
     const profile = await Profile.findById(id);
     if (!profile) {
-      return res.status(status.NotFound).json({ message: "Profile not found" });
+      res.status(status.NotFound).json({ message: "Profile not found" });
+      return;
     }
 
     // Authorization check (user should be authenticated and has their `id` in `req.user._id`)
@@ -56,9 +59,10 @@ export const updateProfileHandler = async (
       profile.userName.toString() !== (user?._id as string).toString() ||
       user.role !== "admin"
     ) {
-      return res
+      res
         .status(status.AccessDenied)
         .json({ message: "You are not authorized to update this profile." });
+      return;
     }
 
     // Update fields if provided
@@ -82,14 +86,16 @@ export const updateProfileHandler = async (
 
     await profile.save();
 
-    return res.status(status.Success).json({
+    res.status(status.Success).json({
       message: "Profile updated successfully",
       profile: profile.toJSON(),
     });
+    return;
   } catch (error: any) {
     console.error("Error updating profile:", error);
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error updating profile", error });
+    return;
   }
 };

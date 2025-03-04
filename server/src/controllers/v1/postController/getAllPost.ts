@@ -21,7 +21,7 @@ interface PostQueryParams {
 export const getAllPostsHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const {
       permalink,
@@ -31,7 +31,7 @@ export const getAllPostsHandler = async (
       tag,
       startDate,
       endDate,
-    }: PostQueryParams = req.query 
+    }: PostQueryParams = req.query;
 
     validateField(permalink, "Permalink", "string");
     validateField(author, "Author", "string");
@@ -69,14 +69,17 @@ export const getAllPostsHandler = async (
       .populate("tags", "name");
 
     if (!posts.length) {
-      return res.status(resStatus.NotFound).json({ message: "No posts found" });
+      res.status(resStatus.NotFound).json({ message: "No posts found" });
+      return;
     }
 
-    return res.status(resStatus.Success).json(posts);
+    res.status(resStatus.Success).json(posts);
+    return;
   } catch (error: any) {
     console.error("Error fetching posts:", error);
-    return res
+    res
       .status(resStatus.ServerError)
       .json({ message: "Error fetching posts", error });
+    return;
   }
 };

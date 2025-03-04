@@ -11,20 +11,20 @@ const resStatus = status;
 export const createCommentHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const user = req.user; // Get user making the comment
     const { postId, parentCommentId, content, status } = req.body;
 
     if (!user) {
-      return res.status(401).json({ message: "User is not authenticated" });
+      res.status(401).json({ message: "User is not authenticated" });
+      return;
     }
 
     // Validate necessary fields
     if (!postId || !content) {
-      return res
-        .status(400)
-        .json({ message: "Post and content are required." });
+      res.status(400).json({ message: "Post and content are required." });
+      return;
     }
 
     // Determine the comment status based on the user's role
@@ -50,9 +50,10 @@ export const createCommentHandler = async (
 
       await newComment.save();
 
-      return res
+      res
         .status(resStatus.Created)
         .json({ message: "Comment created", comment: newComment });
+      return;
     }
 
     const lastComment =
@@ -64,21 +65,24 @@ export const createCommentHandler = async (
       status: status,
     };
 
-      const addCommentToPost = postComment.commentList.push(
-        addComment as typeof lastComment
-      ) as unknown as IPostComment
-      
+    const addCommentToPost = postComment.commentList.push(
+      addComment as typeof lastComment
+    ) as unknown as IPostComment;
+
     const commentAdded = await addCommentToPost.save();
     if (!commentAdded) {
-      return res.status(resStatus.BadRequest);
+      res.status(resStatus.BadRequest);
+      return;
     }
 
-    return res
+    res
       .status(resStatus.Created)
       .json({ message: "comment created succefully", comment: addComment });
+    return;
   } catch (error: any) {
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error creating comment", error });
+    return;
   }
 };

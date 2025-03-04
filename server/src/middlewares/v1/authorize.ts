@@ -8,7 +8,8 @@ const authorize = (...roles: string[]) => {
     const userRole = req.user?.role; 
 
     if (!userRole || !roles.includes(userRole)) {
-      return res.status(status.accessDenied).json({ message: `User role '${userRole}' is not authorized to access this route` });
+      res.status(status.AccessDenied).json({ message: `User role '${userRole}' is not authorized to access this route` });
+      return;
     }
     
     next();

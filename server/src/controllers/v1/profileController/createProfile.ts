@@ -11,7 +11,7 @@ import { validateField } from "../../../utilities/helpers/validateField";
 export const createProfileHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const {
       fullName,
@@ -30,9 +30,10 @@ export const createProfileHandler = async (
     const userId = user?._id;
 
     if (!user) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "User is not authenticated" });
+      return;
     }
 
     validateField(fullName, "Full Name", "string");
@@ -48,15 +49,17 @@ export const createProfileHandler = async (
     // Check if profile already exists for the user
     const existingProfile = await Profile.findOne({ userEmail: userId });
     if (existingProfile) {
-      return res
+      res
         .status(status.Unauthorized)
         .json({ message: "Profile already exists." });
+      return;
     }
 
     if (user.role === "subscriber") {
-      return res
+      res
         .status(status.AccessDenied)
         .json({ message: "You are not authorized to create a profile." });
+      return;
     }
 
     // Create a new profile
@@ -75,14 +78,16 @@ export const createProfileHandler = async (
 
     await newProfile.save();
 
-    return res.status(status.Created).json({
+    res.status(status.Created).json({
       message: "Profile created successfully.",
       profile: newProfile.toJSON(),
     });
+    return;
   } catch (error: any) {
     console.error("Error creating profile:", error);
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error creating profile", error: error.message });
+    return;
   }
 };

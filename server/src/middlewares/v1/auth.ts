@@ -3,27 +3,38 @@ import User from "../../models/user";
 import { Response, NextFunction } from "express";
 import { JwtPayload } from "../../types/interface";
 import AuthRequest from "../../types/authRequest";
+import { status } from "../../utilities/enums/statusCode";
 
-
-
-const validateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+const validateToken = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = req.cookies?.authToken;
 
     if (!token) {
-      return res.status(401).json({ message: "Authentication token is missing" });
+      res
+        .status(status.Unauthorized)
+        .json({ message: "Authentication token is missing" });
+      return;
     }
 
     // Verify JWT Token
-    const payload = jwt.verify(token, process.env.JWT_SECRET_KEY as string) as JwtPayload;
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_SECRET_KEY as string
+    ) as JwtPayload;
     if (!payload?.id) {
-      return res.status(401).json({ message: "Invalid token" });
+      res.status(status.Unauthorized).json({ message: "Invalid token" });
+      return;
     }
 
     // Fetch user data from database (Best Practice)
     const user = await User.findById(payload.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      res.status(status.NotFound).json({ message: "User not found" });
+      return;
     }
 
     // Attach user to request
@@ -32,11 +43,20 @@ const validateToken = async (req: AuthRequest, res: Response, next: NextFunction
     next();
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token has expired. Please log in again." });
+      res
+        .status(status.Unauthorized)
+        .json({ message: "Token has expired. Please log in again." });
+      return;
     } else if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ message: "Invalid token. Authentication failed." });
+      res
+        .status(401)
+        .json({ message: "Invalid token. Authentication failed." });
+      return;
     }
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(status.ServerError)
+      .json({ message: "Internal server error", error: error.message });
+    return;
   }
 };
 

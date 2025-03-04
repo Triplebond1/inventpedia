@@ -17,7 +17,7 @@ const statusCode = status;
 export const createPostHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     let {
       title,
@@ -45,9 +45,10 @@ export const createPostHandler = async (
     const user = req.user;
 
     if (!user) {
-      return res
+       res
         .status(statusCode.Unauthorized)
         .json({ message: "User is not authenticated" });
+        return;
     }
 
     // Validate required fields
@@ -76,18 +77,20 @@ export const createPostHandler = async (
 
     // Check user role and handle subscriber-specific logic
     if (user?.role === "subscriber" || user?.role === "guest") {
-      return res
+    res
         .status(statusCode.AccessDenied)
         .json({ message: "your are not eligible to create posts." });
+        return;
     }
 
     // Validate categories, ensuring they are known and registered
     if (categories && categories.length > 0) {
       const validCategories = await Category.find({ _id: { $in: categories } });
       if (validCategories.length !== categories.length) {
-        return res
+         res
           .status(statusCode.BadRequest)
           .json({ message: "One or more categories are invalid." });
+          return;
       }
     }
 
@@ -95,9 +98,10 @@ export const createPostHandler = async (
     if (tags && tags.length > 0) {
       const validTags = await Tag.find({ _id: { $in: tags } });
       if (validTags.length !== tags.length) {
-        return res
+        res
           .status(statusCode.BadRequest)
           .json({ message: "One or more tags are invalid." });
+          return;
       }
     }
 
@@ -150,11 +154,13 @@ export const createPostHandler = async (
     // Run validation before saving
 
     // Respond with the newly created post
-    return res.status(statusCode.Created).json(savedPost);
+    res.status(statusCode.Created).json(savedPost);
+    return;
   } catch (error: any) {
     console.error("Error creating post:", error);
-    return res
+    res
       .status(statusCode.ServerError)
       .json({ message: "Error creating post", error });
+      return;
   }
 };

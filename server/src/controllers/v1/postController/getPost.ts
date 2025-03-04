@@ -6,16 +6,20 @@ import { status } from "../../../utilities/enums/statusCode";
 // @desc    Get a post by id
 // @route   GET /v1/api/post /:id
 // @access  Public
-export const getAPostHandler = async (req: AuthRequest, res: Response): Promise<Response> => {
+export const getAPostHandler = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
 
     // Validate and set 'id' in the query if provided
     if (id) {
       if (typeof id !== "string") {
-        return res.status(status.BadRequest).json({
+        res.status(status.BadRequest).json({
           message: "'id' must be a string",
         });
+        return;
       }
     }
 
@@ -31,13 +35,18 @@ export const getAPostHandler = async (req: AuthRequest, res: Response): Promise<
 
     // Handle no post found
     if (!post) {
-      return res.status(status.NotFound).json({ message: "Post not found" });
+      res.status(status.NotFound).json({ message: "Post not found" });
+      return;
     }
 
     // Return the found post
-    return res.status(status.Success).json(post);
+    res.status(status.Success).json(post);
+    return;
   } catch (error: any) {
     console.error("Error fetching post:", error);
-    return res.status(status.ServerError).json({ message: "Error fetching post", error });
+    res
+      .status(status.ServerError)
+      .json({ message: "Error fetching post", error });
+    return;
   }
 };

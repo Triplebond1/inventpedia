@@ -21,7 +21,7 @@ const resStatus = status;
 export const updatePostHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const user = req.user;
@@ -49,9 +49,10 @@ export const updatePostHandler = async (
     }: IPost = req.body;
 
     if (!user) {
-      return res
+      res
         .status(resStatus.Unauthorized)
         .json({ message: "User is not authenticated" });
+      return;
     }
 
     // Check if the status is valid
@@ -66,17 +67,17 @@ export const updatePostHandler = async (
         "rejected",
       ].includes(status)
     ) {
-      return res
+      res
         .status(resStatus.BadRequest)
         .json({ message: "Invalid status provided." });
+      return;
     }
 
     // Fetch the post by ID
     const post = await Post.findById(id);
     if (!post) {
-      return res
-        .status(resStatus.NotFound)
-        .json({ message: "Post not found." });
+      res.status(resStatus.NotFound).json({ message: "Post not found." });
+      return;
     }
 
     // Authorization check: only admin, editor, author, or contributor can update the post
@@ -92,9 +93,10 @@ export const updatePostHandler = async (
     const isAuthorized = allowedRoles.includes(user.role);
 
     if (!isAuthorized) {
-      return res
+      res
         .status(resStatus.Unauthorized)
         .json({ message: "You are not authorized to update this post." });
+      return;
     }
 
     //if post is our own content and manage by us is shdould be edited by comminuity for consistency.
@@ -105,9 +107,10 @@ export const updatePostHandler = async (
         post.author.toString() === (user._id as string).toString();
 
       if (!isAuthorizedRole) {
-        return res
+        res
           .status(resStatus.Unauthorized)
           .json({ message: "You are not authorized to update this post." });
+        return;
       }
     }
 
@@ -177,10 +180,12 @@ export const updatePostHandler = async (
         res
           .status(resStatus.ServerError)
           .json({ message: "unable to stage post for contribution" });
+        return;
       }
-      return res.status(resStatus.Success).json({
+      res.status(resStatus.Success).json({
         message: " contribution made succesfully",
       });
+      return;
     }
 
     // Authorization check for update: only admin, editor, and post orignial author can update the post
@@ -190,9 +195,10 @@ export const updatePostHandler = async (
       post.author.toString() === (user._id as string).toString();
 
     if (!isAuthorizedRole) {
-      return res
+      res
         .status(resStatus.Unauthorized)
         .json({ message: "You are not authorized to update this post." });
+      return;
     }
 
     //admin, editor and post author specific staging
@@ -202,14 +208,17 @@ export const updatePostHandler = async (
         updateData as IPost
       );
       if (!createStagePost) {
-        return res
+        res
           .status(resStatus.ServerError)
           .json({ message: "unable to create a stage post" });
+        return;
       }
-      return res
+      res
         .status(resStatus.Success)
         .json({ message: "create stage successfully" });
+      return;
     }
+
     if (updateData) {
       // Check if the post has a version
       const VersionAlreadyExist = await PostVersion.findOne({
@@ -219,9 +228,10 @@ export const updatePostHandler = async (
       if (!VersionAlreadyExist) {
         const createVersion = await CreatePostVersion(post, user);
         if (!createVersion) {
-          return res
+          res
             .status(resStatus.ServerError)
             .json({ message: "Error creating post version." });
+          return;
         }
         updateData.version = {
           versionId: createVersion.id,
@@ -240,9 +250,10 @@ export const updatePostHandler = async (
       );
 
       if (!addNewVersion) {
-        return res
+        res
           .status(resStatus.ServerError)
           .json({ message: "Error creating new post version." });
+        return;
       }
 
       updateData.version = {
@@ -268,14 +279,16 @@ export const updatePostHandler = async (
       .populate("previousPost", "postLink");
 
     // Return success response
-    return res.status(resStatus.Success).json({
+    res.status(resStatus.Success).json({
       message: "Post updated successfully.",
       post: updatedPost,
     });
+    return;
   } catch (error: any) {
     console.error("Error updating post:", error);
-    return res
+    res
       .status(resStatus.ServerError)
       .json({ message: "Error updating post.", error });
+    return;
   }
 };

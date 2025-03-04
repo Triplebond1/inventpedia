@@ -12,7 +12,7 @@ import { validateField } from "../../../utilities/helpers/validateField";
 export const updateUserHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const userId = req.params.id;
     let { username, email, password, role }: IUser = req.body;
@@ -22,7 +22,7 @@ export const updateUserHandler = async (
     validateField(email, "Email", "string");
     validateField(password, "Password", "string");
     validateField(role, "Role", "string");
-    validateField(userId, "user ID", "string")
+    validateField(userId, "user ID", "string");
 
     // Convert fields to lowercase where necessary
     username ? username.toLowerCase() : null;
@@ -32,26 +32,30 @@ export const updateUserHandler = async (
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(status.NotFound).json({ message: "User not found" });
+      res.status(status.NotFound).json({ message: "User not found" });
+      return;
     }
 
     if (!userId) {
-      return res.status(status.BadRequest).json({message: "ID is required"})
+      res.status(status.BadRequest).json({ message: "ID is required" });
+      return;
     }
 
     // Authorization check: only admin or the user can update their data
     if (req.user?.role !== "admin" && req.user?.id !== userId) {
-      return res.status(status.AccessDenied).json({ message: "Access denied" });
+      res.status(status.AccessDenied).json({ message: "Access denied" });
+      return;
     }
 
     // Password validation
     if (password) {
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
       if (!passwordRegex.test(password)) {
-        return res.status(status.BadRequest).json({
+        res.status(status.BadRequest).json({
           message:
             "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number",
         });
+        return;
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
@@ -67,14 +71,16 @@ export const updateUserHandler = async (
 
     await user.save();
 
-    return res.status(status.Success).json({
+    res.status(status.Success).json({
       message: "User updated successfully",
       user: user.toJSON(),
     });
+    return;
   } catch (error: any) {
     console.error("Error updating user:", error);
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Internal server error", error: error.message });
+    return;
   }
 };

@@ -9,26 +9,29 @@ import { status } from "../../../utilities/enums/statusCode";
 export const getAllProfileHandler = async (
   req: AuthRequest,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const user = req.user;
 
-    const allowedRoles: string[] = ["admin", "moderator"]; 
+    const allowedRoles: string[] = ["admin", "moderator"];
 
     if (!user?.role || !allowedRoles.includes(user.role)) {
-      return res.status(status.AccessDenied).json({ message: "Access denied" });
+      res.status(status.AccessDenied).json({ message: "Access denied" });
+      return;
     }
-    
+
     const profile = await Profile.find()
       .populate("userName", "username")
       .populate("userEmail", "email")
       .populate("userRole", "role");
 
-    return res.status(status.Success).json({ profile });
+    res.status(status.Success).json({ profile });
+    return;
   } catch (error: any) {
     console.error("Error fetching profiles:", error);
-    return res
+    res
       .status(status.ServerError)
       .json({ message: "Error fetching profiles", error });
+    return;
   }
 };
