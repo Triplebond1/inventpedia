@@ -5,7 +5,8 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  role:string;
+  role: string;
+  profileId?: unknown;
   createdAt: Date;
 }
 
@@ -45,6 +46,10 @@ const userSchema = new Schema<IUser>(
         "subscriber",
       ],
       default: "subscriber",
+    },
+    profileId: {
+      type: mongoose.Types.ObjectId,
+      ref: "Profile"
     },
     createdAt: {
       type: Date,

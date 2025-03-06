@@ -9,6 +9,7 @@ import { logOutUserHandler } from "../../auth/signOut";
 import { getUserHandler } from "../../controllers/v1/userController/getUser";
 import { getAllUsersHandler } from "../../controllers/v1/userController/getAllUser";
 import { updateUserHandler } from "../../controllers/v1/userController/updateUser";
+import { deleteUserHandler } from "../../controllers/v1/userController/deleteUser";
 
 // @desc    Create a new user
 // @route   POST /v1/api/users
@@ -43,6 +44,6 @@ router.put("/:id", validateToken, updateUserHandler);
 // // @desc    Delete a user
 // // @route   DELETE /v1/api/users/:id
 // // @access  Private (Admin only)
-// router.delete("/:id", validateToken, authorize('admin'), deleteUserHandler);
+router.delete("/:id", validateToken, authorize('admin'), deleteUserHandler);
 
 export default router;

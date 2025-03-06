@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { JwtPayload } from "../types/interface";
 import {
-  validateEmail,
   validatePassword,
   validateRequiredField,
 } from "../utilities/helpers/validateField";
@@ -36,8 +35,8 @@ export const logInUserHandler = async (
     validateRequiredField(password, "password", "string");
     validatePassword(password);
     usernameOrEmail = usernameOrEmail.toLowerCase();
-
-    const isValidEmail = validateEmail(usernameOrEmail);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidEmail = emailRegex.test(usernameOrEmail);
 
     const query: { email?: string; username?: string } = isValidEmail
       ? { email: usernameOrEmail }
@@ -74,6 +73,7 @@ export const logInUserHandler = async (
       username: user.username,
       email: user.email,
       role: user.role,
+      profileId: user.profileId,
     };
 
     res.cookie("authToken", token, {

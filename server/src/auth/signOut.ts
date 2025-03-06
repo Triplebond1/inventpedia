@@ -3,7 +3,7 @@ import { status } from "../utilities/enums/statusCode";
 
 export const logOutUserHandler = async (req: Request, res: Response):Promise<void> => {
   try {
-    res.clearCookie("authToken", {
+    res.cookie("authToken", {
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",

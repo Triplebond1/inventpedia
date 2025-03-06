@@ -5,7 +5,7 @@ export interface IProfile extends Document {
   userName: mongoose.Types.ObjectId;
   userEmail: mongoose.Types.ObjectId;
   userRole: mongoose.Types.ObjectId;
-  profilePicture: string;
+  profilePicture?: string;
   website?: string;
   inventpediaPage?: string;
   location?: string;
@@ -25,6 +25,7 @@ const profileSchema = new Schema<IProfile>(
     fullName: {
       type: String,
       trim: true,
+      default: null,
     },
 
     userName: {
@@ -52,33 +53,33 @@ const profileSchema = new Schema<IProfile>(
     website: {
       type: String,
       trim: true,
-      default: "",
+      default: null,
     },
 
     inventpediaPage: {
       type: String,
       trim: true,
-      default: "",
+      default: null,
     },
 
     location: {
       type: String,
       trim: true,
-      default: "",
+      default: null,
     },
 
     social: {
-      twitter: { type: String, trim: true, default: "" },
-      facebook: { type: String, trim: true, default: "" },
-      linkedin: { type: String, trim: true, default: "" },
-      instagram: { type: String, trim: true, default: "" },
+      twitter: { type: String, trim: true, default: null },
+      facebook: { type: String, trim: true, default: null },
+      linkedin: { type: String, trim: true, default: null },
+      instagram: { type: String, trim: true, default: null },
     },
 
     bio: {
       type: String,
       trim: true,
       maxlength: 500,
-      default: "",
+      default: null,
     },
 
     createdAt: {

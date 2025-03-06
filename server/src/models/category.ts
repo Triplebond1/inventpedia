@@ -20,7 +20,7 @@ const categorySchema: Schema<ICategory> = new Schema(
       type: String,
       trim: true,
       maxlength: 300,
-      default: "",
+      default:null,
     },
 
     createdAt: {

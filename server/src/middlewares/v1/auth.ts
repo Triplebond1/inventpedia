@@ -30,7 +30,7 @@ const validateToken = async (
       return;
     }
 
-    // Fetch user data from database (Best Practice)
+    // Fetch user data from database 
     const user = await User.findById(payload.id).select("-password");
     if (!user) {
       res.status(status.NotFound).json({ message: "User not found" });
@@ -49,7 +49,7 @@ const validateToken = async (
       return;
     } else if (error.name === "JsonWebTokenError") {
       res
-        .status(401)
+        .status(status.Unauthorized)
         .json({ message: "Invalid token. Authentication failed." });
       return;
     }
