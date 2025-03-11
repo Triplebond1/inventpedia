@@ -8,30 +8,29 @@ export interface IStagedPost extends Document {
   content: string;
   keyTakeAway?: string;
   summary?: string;
-  slug: string;
+  slug?: string;
   postContributor?: Schema.Types.ObjectId[];
-  metaDescription: string;
+  metaDescription?: string;
   focusKeywords: string[];
   status: string;
-  categories: Schema.Types.ObjectId[];
-  tags: Schema.Types.ObjectId[];
+  categories?: Schema.Types.ObjectId[];
+  tags?: Schema.Types.ObjectId[];
   ownContent: boolean;
-  coverImage: Schema.Types.ObjectId;
-  featuredImage: Schema.Types.ObjectId[];
-  featuredVideo: Schema.Types.ObjectId[];
-  schemaMarkup: Record<string, unknown>;
-  social: Record<string, string>;
-  breadcrumbList: {
+  coverImage?: Schema.Types.ObjectId;
+  featuredImage?: Schema.Types.ObjectId[];
+  featuredVideo?: Schema.Types.ObjectId[];
+  schemaMarkup?: Record<string, unknown>;
+  social?: Record<string, string>;
+  breadcrumbList?: {
     "@type": string;
     position: number;
     name: string;
     item: string;
   }[];
-  relatedPosts: Schema.Types.ObjectId[];
+  relatedPosts?: Schema.Types.ObjectId[];
   nextPost?: Schema.Types.ObjectId;
   previousPost?: Schema.Types.ObjectId;
-  versionEdited: number;
-  createdAt: Date;
+  versionEdited?: number;
 }
 
 const stagedPostSchema = new Schema<IStagedPost>(
@@ -40,7 +39,6 @@ const stagedPostSchema = new Schema<IStagedPost>(
       type: Schema.Types.ObjectId,
       ref: "Post",
       required: true,
-      index: true,
     },
 
     stagedPostAuthor: {
@@ -52,7 +50,7 @@ const stagedPostSchema = new Schema<IStagedPost>(
     content: { type: String, required: true },
     keyTakeAway: { type: String, trim: true, maxlength: 200 },
     summary: { type: String, trim: true, maxlength: 300 },
-    slug: { type: String, unique: true, lowercase: true, trim: true },
+    slug: { type: String, lowercase: true, trim: true },
     postContributor: [{ type: Schema.Types.ObjectId, ref: "User" }],
     metaDescription: { type: String, trim: true, maxlength: 160 },
     focusKeywords: [{ type: String, trim: true }],
@@ -96,7 +94,6 @@ const stagedPostSchema = new Schema<IStagedPost>(
     previousPost: { type: Schema.Types.ObjectId, ref: "Page" },
     ownContent: {type: Boolean, dafault: false},
     versionEdited: { type: Number },
-    createdAt: { type: Date, default: Date.now },
   },
 
   { timestamps: true }

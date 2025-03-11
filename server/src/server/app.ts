@@ -5,11 +5,11 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 import userRoute from "../route/v1/userRoute";
-// import postRoute from "../route/v1/postRoute";
+import postRoute from "../route/v1/postRoute";
 // import tagRoute  from "../route/v1/tagRoute"
 // import categoryRoute from "../route/v1/categoryRoute";
 // import commentRoute  from "../route/v1/commentRoute";
-// import profileRoute  from "../route/v1/profileRoute";
+import profileRoute  from "../route/v1/profileRoute";
 // import pageRoute   from "../route/v1/pageRoute";
 // import imageRoute from "../route/v1/imageRoute";
 
@@ -30,12 +30,12 @@ app.use(cookieParser());
 
 //routes
 app.use("/v1/users", userRoute);
-// app.use("/v1/api/post", postRoute);
-// app.use("/v1/api/tag", tagRoute);
-// app.use("/v1/api/categories", categoryRoute);
-// app.use("/v1/api/comments", commentRoute);
-// app.use("/v1/api/profiles", profileRoute);
-// app.use("/v1/api/pages", pageRoute);
-// app.use("/v1/api/images", imageRoute);
+app.use("/v1/post", postRoute);
+// app.use("/v1/tag", tagRoute);
+// app.use("/v1/categories", categoryRoute);
+// app.use("/v1/comments", commentRoute);
+app.use("/v1/profiles", profileRoute);
+// app.use("/v1/pages", pageRoute);
+// app.use("/v1/images", imageRoute);
 
 export default  app;

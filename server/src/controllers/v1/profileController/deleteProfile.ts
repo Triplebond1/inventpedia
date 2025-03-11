@@ -30,9 +30,9 @@ export const deleteProfileHandler = async (
       return;
     }
 
-    // Authorization check (user should be authenticated and has their `id` in `req.user._id`)
+    // Authorization check (user should be authenticated and has their `id` in `req.user._id
+    // only admin can delete profile`)
     if (
-      profile.userName.toString() !== (user._id as string).toString() ||
       user.role !== "admin"
     ) {
       res

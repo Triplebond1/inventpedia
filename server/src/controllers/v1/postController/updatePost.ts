@@ -41,13 +41,13 @@ export const updatePostHandler = async (
       coverImage,
       featuredVideo,
       status,
+      stagedStatus,
       stage,
       nextPost,
       previousPost,
       relatedPosts,
       breadcrumbList,
-    }: IPost = req.body;
-
+    } = req.body;
     if (!user) {
       res
         .status(resStatus.Unauthorized)
@@ -148,8 +148,8 @@ export const updatePostHandler = async (
       coverImage: coverImage || post.coverImage,
       featuredVideo: featuredVideo || post.featuredVideo,
       status: status,
-      publishDate: status === "published" ? Date.now() : undefined,
-      lastModifiedDate: Date.now(),
+      publishDate: status === "published" ? new Date(): undefined,
+      lastModifiedDate: new Date(),
       nextPost: nextPost || post.nextPost,
       previousPost: previousPost || post.previousPost,
       relatedPosts: relatedPosts || post.relatedPosts,
@@ -157,11 +157,10 @@ export const updatePostHandler = async (
     };
 
     //authorization check for staging: only admin, editor, and post orignial author update should not be staged
+    // unless they specify they want to stage their edit
     const stagedData: Partial<IPost> = {
-      title: title || undefined,
-      content: content || undefined,
-      summary: summary || undefined,
-      keyTakeAway: keyTakeAway || undefined,
+      _id: post._id,
+      version: post.version,
     };
     const allowedRolesForStaging = [
       "author",
@@ -175,7 +174,7 @@ export const updatePostHandler = async (
       isAuthorizedForStaging &&
       !(post.author.toString() === (user._id as string).toString())
     ) {
-      const stagePost = await createStagedPost(user, stagedData as IPost);
+      const stagePost = await createStagedPost(user, stagedData as IPost, updateData as IPost, stagedStatus as string);
       if (!stagePost) {
         res
           .status(resStatus.ServerError)
@@ -184,6 +183,7 @@ export const updatePostHandler = async (
       }
       res.status(resStatus.Success).json({
         message: " contribution made succesfully",
+        stagedPost: stagePost,
       });
       return;
     }
@@ -205,7 +205,8 @@ export const updatePostHandler = async (
     if (isAuthorizedRole && stage == true) {
       const createStagePost = await createStagedPostForAdmin(
         user,
-        updateData as IPost
+        stagedData as IPost,
+        updateData as IPost,
       );
       if (!createStagePost) {
         res
@@ -221,11 +222,34 @@ export const updatePostHandler = async (
 
     if (updateData) {
       // Check if the post has a version
-      const VersionAlreadyExist = await PostVersion.findOne({
+      const versionAlreadyExist = await PostVersion.findOne({
         postId: post._id,
       });
 
-      if (!VersionAlreadyExist) {
+      if (versionAlreadyExist) {
+        const addNewVersion = await createPostNewVersion(
+          versionAlreadyExist as IPostVersion,
+          post,
+          user
+        );
+
+        if (!addNewVersion) {
+          res
+            .status(resStatus.ServerError)
+            .json({ message: "Error creating new post version." });
+          return;
+        }
+
+        updateData.version = {
+          versionIndexList: [
+            ...post.version.versionIndexList,
+            addNewVersion.versionList[addNewVersion.versionList.length - 1]
+              .version + 1,
+          ],
+        };
+      }
+
+      if (!versionAlreadyExist) {
         const createVersion = await CreatePostVersion(post, user);
         if (!createVersion) {
           res
@@ -238,31 +262,10 @@ export const updatePostHandler = async (
           versionIndexList: [
             ...post.version.versionIndexList,
             createVersion.versionList[createVersion.versionList.length - 1]
-              .version,
+              .version + 1,
           ],
         };
       }
-
-      const addNewVersion = await createPostNewVersion(
-        VersionAlreadyExist as IPostVersion,
-        post,
-        user
-      );
-
-      if (!addNewVersion) {
-        res
-          .status(resStatus.ServerError)
-          .json({ message: "Error creating new post version." });
-        return;
-      }
-
-      updateData.version = {
-        versionIndexList: [
-          ...post.version.versionIndexList,
-          addNewVersion.versionList[addNewVersion.versionList.length - 1]
-            .version,
-        ],
-      };
     }
 
     // Update the post with new data
@@ -288,7 +291,7 @@ export const updatePostHandler = async (
     console.error("Error updating post:", error);
     res
       .status(resStatus.ServerError)
-      .json({ message: "Error updating post.", error });
+      .json({ message: "Error updating post."});
     return;
   }
 };

@@ -8,33 +8,35 @@ import { IUser } from "../../models/user";
 // @access  Private (Admin, editor, author and contributor)
 export const createStagedPost = async (
   user: IUser,
+  postData: IPost,
   data: IPost,
-  status?: string,
+  status?: string
 ): Promise<IStagedPost> => {
   try {
     if (!user && !data) {
       throw new Error("user and data for staged post are required");
     }
 
-    const allowedStatus = [
-      "draft",
-      "review",
-    ];
+    const allowedStatus = ["draft", "review"];
 
     if (status && !allowedStatus.includes(status)) {
-      throw new Error ("status is not allowed")
+      throw new Error("status is not allowed");
     }
+
     // Create the staged post
     const stagedPost = new StagedPost({
-      postId: data._id,
-      StagedPostAuthor: user._id,
+      postId: postData._id,
+      stagedPostAuthor: user._id,
       title: data.title,
       content: data.content,
+      slug: data.slug,
       keyTakeAway: data.keyTakeAway,
-      status: status? status : "draft",
+      status: status ? status : "draft",
       summary: data.summary,
-      version: data.version.versionIndexList[-1],
-      createdAt: Date.now,
+      versionEdited:
+        postData.version.versionIndexList[
+          postData.version.versionIndexList.length - 1
+        ],
     });
 
     // Save the staged post
@@ -47,6 +49,7 @@ export const createStagedPost = async (
 
 export const createStagedPostForAdmin = async (
   user: IUser,
+  postData: IPost,
   data: IPost,
   status?: string
 ): Promise<IStagedPost> => {
@@ -55,39 +58,33 @@ export const createStagedPostForAdmin = async (
       throw new Error("user and data for staged post are required");
     }
 
-    const allowedStatus = [
-      "draft",
-      "review",
-      "reviewed",
-    ];
-
-    if (status && !allowedStatus.includes(status)) {
-      throw new Error ("status is not allowed")
-    }
     // Create the staged post
     const stagedPost = new StagedPost({
-      postId: data._id,
-      StagedPostAuthor: user._id,
-      title: data.title || null,
-      content: data.content || null,
-      keyTakeAway: data.keyTakeAway || null,
-      summary: data.summary || null,
-      postContributor: data.postContributor || null,
-      metaDescription: data.metaDescription || null,
-      focusKeywords: data.focusKeywords || null,
-      categories: data.categories || null,
-      tags: data.tags || null,
-      featuredImage: data.featuredImage || null,
-      coverImage: data.coverImage || null,
-      featuredVideo: data.featuredVideo || null,
-      status: status? status : "draft",
-      version: data.version.versionIndexList[-1],
+      postId: postData._id,
+      stagedPostAuthor: user._id,
+      title: data.title,
+      content: data.content,
+      keyTakeAway: data.keyTakeAway,
+      summary: data.summary,
+      slug: data.slug,
+      postContributor: data.postContributor,
+      metaDescription: data.metaDescription,
+      focusKeywords: data.focusKeywords,
+      categories: data.categories,
+      tags: data.tags,
+      featuredImage: data.featuredImage,
+      coverImage: data.coverImage,
+      featuredVideo: data.featuredVideo,
+      status: status ? status : "draft",
+      versionEdited:
+        postData.version.versionIndexList[
+          postData.version.versionIndexList.length - 1
+        ],
       ownContent: data.ownContent || false,
-      nextPost: data.nextPost || null,
-      previousPost: data.previousPost || null,
-      relatedPosts: data.relatedPosts || null,
-      breadcrumbList: data.breadcrumbList || null,
-      createdAt: Date.now,
+      nextPost: data.nextPost,
+      previousPost: data.previousPost,
+      relatedPosts: data.relatedPosts,
+      breadcrumbList: data.breadcrumbList,
     });
 
     // Save the staged post

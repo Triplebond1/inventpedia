@@ -160,7 +160,7 @@ export const createPostHandler = async (
     console.error("Error creating post:", error);
     res
       .status(statusCode.ServerError)
-      .json({ message: "Error creating post", error });
+      .json({ message: "Error creating post", error: error.message });
       return;
   }
 };

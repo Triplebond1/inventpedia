@@ -32,7 +32,7 @@ export const getProfileHandler = async (
     console.error("Error fetching profiles:", error);
     res
       .status(status.ServerError)
-      .json({ message: "Error fetching profiles", error });
+      .json({ message: "Error fetching profiles", error: error.message });
     return;
   }
 };

@@ -42,8 +42,8 @@ export interface IPost extends Document {
     versionId?: Schema.Types.ObjectId;
     versionIndexList: number[];
   };
-  lastModifiedDate: Date | number;
-  publishDate?: Date | number;
+  lastModifiedDate: Date;
+  publishDate?: Date;
 }
 
 const postSchema = new Schema<IPost>(
@@ -98,9 +98,9 @@ const postSchema = new Schema<IPost>(
     breadcrumbList: [
       { "@type": String, position: Number, name: String, item: String },
     ],
-    relatedPosts: [{ type: Schema.Types.ObjectId, ref: "Page" }],
-    nextPost: { type: Schema.Types.ObjectId, ref: "Page" },
-    previousPost: { type: Schema.Types.ObjectId, ref: "Page" },
+    relatedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    nextPost: { type: Schema.Types.ObjectId, ref: "Post" },
+    previousPost: { type: Schema.Types.ObjectId, ref: "Post" },
     readTime: { type: Number },
     version: {
       versionId: { type: Schema.Types.ObjectId, ref: "PostVersion" },
@@ -108,8 +108,8 @@ const postSchema = new Schema<IPost>(
     },
     ownContent: {type: Boolean, dafault: false},
     views: { type: Number, default: 0 },
-    lastModifiedDate: { type: Number },
-    publishDate: { type: Number },
+    lastModifiedDate: { type: Date, default: Date.now() },
+    publishDate: { type:Date  },
   },
   { timestamps: true }
 );
@@ -141,17 +141,17 @@ postSchema.pre("validate", function (next) {
       },
     },
     datePublished: this.publishDate || undefined,
-    dateModified: this.lastModifiedDate || new Date(),
+    dateModified: this.lastModifiedDate || Date.now(),
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": this.slug ? `${process.env.BASE_URL}/${this.slug}` : "",
     },
-    breadcrumb: this.breadcrumbList.map((crumb, index) => ({
-      "@type": "ListItem",
-      position: crumb.position || index + 1,
-      name: crumb.name,
-      item: crumb.item,
-    })),
+    // breadcrumb: this.breadcrumbList.map((crumb, index) => ({
+    //   "@type": "ListItem",
+    //   position: crumb.position || index + 1,
+    //   name: crumb.name,
+    //   item: crumb.item,
+    // })),
   };
   next();
 });

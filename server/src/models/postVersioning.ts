@@ -73,7 +73,6 @@ const postVersionSchema = new Schema<IPostVersion>(
         ],
         schemaMarkup: { type: Object, default: {} },
         createdAt: { type: Date, default: Date.now },
-        index: true,
       },
     ],
   },

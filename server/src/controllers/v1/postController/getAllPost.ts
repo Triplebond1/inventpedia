@@ -12,8 +12,8 @@ interface PostQueryParams {
   category?: string;
   status?: string;
   tag?: string;
-  startDate?: number;
-  endDate?: number;
+  startDate?: string;
+  endDate?: string;
 }
 // @desc    Get all posts (with optional filtering by category, tag, date range)
 // @route   GET /v1/api/post
@@ -32,6 +32,10 @@ export const getAllPostsHandler = async (
       startDate,
       endDate,
     }: PostQueryParams = req.query;
+
+    const page: number = parseInt(req.query.page as string, 10) || 1;
+    const limit: number = parseInt(req.query.limit as string, 10) || 10;
+    const skip: number = (page - 1) * limit;
 
     validateField(permalink, "Permalink", "string");
     validateField(author, "Author", "string");
@@ -52,10 +56,11 @@ export const getAllPostsHandler = async (
 
     // Filter by specific day or date range
     if (startDate || endDate) {
-      const start = new Date(startDate as number);
+      const start = new Date(startDate as string);
       const end = endDate
-        ? new Date(endDate as number)
-        : new Date(startDate as number);
+        ? new Date(endDate as string)
+        : new Date(startDate as string);
+
       query.publishDate = {
         $gte: start,
         $lte: end,
@@ -66,20 +71,28 @@ export const getAllPostsHandler = async (
     const posts = await Post.find(query)
       .populate("author", "name")
       .populate("categories", "name")
-      .populate("tags", "name");
+      .populate("tags", "name")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments({ status: "published" });
 
     if (!posts.length) {
       res.status(resStatus.NotFound).json({ message: "No posts found" });
       return;
     }
 
-    res.status(resStatus.Success).json(posts);
+    res.status(resStatus.Success).json({
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      posts,
+    });
     return;
   } catch (error: any) {
     console.error("Error fetching posts:", error);
-    res
-      .status(resStatus.ServerError)
-      .json({ message: "Error fetching posts", error });
+    res.status(resStatus.ServerError).json({ message: "Error fetching posts" });
     return;
   }
 };

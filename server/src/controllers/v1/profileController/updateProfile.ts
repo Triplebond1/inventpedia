@@ -14,9 +14,7 @@ export const updateProfileHandler = async (
   try {
     const { id } = req.params;
     let {
-      userName,
-      userEmail,
-      userRole,
+      fullName,
       profilePicture,
       website,
       inventpediaPage,
@@ -39,9 +37,7 @@ export const updateProfileHandler = async (
       return;
     }
 
-    validateField(userName, "User Name", "string");
-    validateField(userEmail, "User Email", "string");
-    validateField(userRole, "User Role", "string");
+    validateField(fullName, "full name", "string");
     validateField(profilePicture, "Profile Picture", "string");
     validateField(website, "Website", "string");
     validateField(inventpediaPage, "Inventpedia Page", "string");
@@ -55,20 +51,23 @@ export const updateProfileHandler = async (
     }
 
     // Authorization check (user should be authenticated and has their `id` in `req.user._id`)
-    if (
-      profile.userName.toString() !== (user?._id as string).toString() ||
-      user.role !== "admin"
-    ) {
-      res
-        .status(status.AccessDenied)
-        .json({ message: "You are not authorized to update this profile." });
+    const isOwner =
+      profile.userName.toString() === (user?._id as string).toString();
+    const isAdmin = user.role === "admin";
+
+    console.log({ isOwner, isAdmin });
+
+    if (!isOwner && !isAdmin) {
+      res.status(status.AccessDenied).json({
+        message: "You are not authorized to update this profile.",
+        role: user.role,
+        name: user.username,
+      });
       return;
     }
 
     // Update fields if provided
-    profile.userName = userName || profile.userName;
-    profile.userEmail = userEmail || profile.userEmail;
-    profile.userRole = userRole || profile.userRole;
+    profile.fullName = fullName || profile.fullName;
     profile.profilePicture = profilePicture || profile.profilePicture;
     profile.website = website || profile.website;
     profile.inventpediaPage = inventpediaPage || profile.inventpediaPage;

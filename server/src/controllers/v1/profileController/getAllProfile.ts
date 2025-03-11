@@ -13,9 +13,13 @@ export const getAllProfileHandler = async (
   try {
     const user = req.user;
 
+    if (!user) {
+      res.status(status.Unauthorized).json({message:"user is not authorized"})
+    }
+    
     const allowedRoles: string[] = ["admin", "moderator"];
 
-    if (!user?.role || !allowedRoles.includes(user.role)) {
+     if (user?.role && !allowedRoles.includes(user.role)) {
       res.status(status.AccessDenied).json({ message: "Access denied" });
       return;
     }
@@ -31,7 +35,7 @@ export const getAllProfileHandler = async (
     console.error("Error fetching profiles:", error);
     res
       .status(status.ServerError)
-      .json({ message: "Error fetching profiles", error });
+      .json({ message: "Error fetching profiles", error: error.message });
     return;
   }
 };

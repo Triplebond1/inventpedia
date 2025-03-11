@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import  validateToken from "../../middlewares/v1/auth";
+import validateToken from "../../middlewares/v1/auth";
 import { authorize } from "../../middlewares/v1/authorize";
 import { createPostHandler } from "../../controllers/v1/postController/createPost";
 import { getAPostHandler } from "../../controllers/v1/postController/getPost";
@@ -8,7 +8,6 @@ import { getAllPostsHandler } from "../../controllers/v1/postController/getAllPo
 import { updatePostStatusHandler } from "../../controllers/v1/postController/updatePostStatus";
 import { updatePostHandler } from "../../controllers/v1/postController/updatePost";
 import { deletePostHandler } from "../../controllers/v1/postController/deletePost";
-
 
 // @desc    Create a new post
 // @route   POST /v1/api/post
@@ -50,7 +49,15 @@ router.put(
 router.put(
   "/:id",
   validateToken,
-  authorize("admin", "editor", "author", "contributor"),
+  authorize(
+    "admin",
+    "author",
+    "contributor",
+    "editor",
+    "moderator",
+    "reviewer",
+    "subscriber"
+  ),
   updatePostHandler
 );
 
@@ -63,5 +70,4 @@ router.delete(
   authorize("admin", "editor", "author"),
   deletePostHandler
 );
-
-module.exports = router;
+export default router;

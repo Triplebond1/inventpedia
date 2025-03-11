@@ -16,7 +16,7 @@ export const CreatePostVersion = async (
       postId: data._id,
       versionList: [
         {
-          version: data.version.versionIndexList.length + 1,
+          version: data.version.versionIndexList.length - 1,
           versionAuthor: userId._id,
           title: data.title,
           content: data.content,
@@ -58,7 +58,7 @@ export const createPostNewVersion = async (
       prevVersion.versionList[prevVersion.versionList.length - 1];
 
     const newVersion: versionLIst = {
-      version: lastVersion.version + 1,
+      version: lastVersion.version,
       versionAuthor: userId._id,
       title: data.title || lastVersion.title,
       content: data.content || lastVersion.content,

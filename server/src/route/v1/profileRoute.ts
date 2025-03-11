@@ -6,23 +6,29 @@ import { createProfileHandler } from "../../controllers/v1/profileController/cre
 import { getProfileHandler } from "../../controllers/v1/profileController/getProfile";
 import { updateProfileHandler } from "../../controllers/v1/profileController/updateProfile";
 import { deleteProfileHandler } from "../../controllers/v1/profileController/deleteProfile";
+import { getAllProfileHandler } from "../../controllers/v1/profileController/getAllProfile";
 
 
 
 // @desc    Create a new profile
 // @route   POST /v1/api/profiles
 // @access  Private
-router.post(
-  "",
-  validateToken,
-  authorize("admin", "editor", "author", "contributor"),
-  createProfileHandler
-);
+// router.post(
+//   "",
+//   validateToken,
+//   authorize("admin", "editor", "author", "contributor"),
+//   createProfileHandler
+// );
+
+// @desc    Get a profiles or a specific profile by ID
+// @route   GET /v1/api/profiles/:id?
+// @access  Public
+router.get("/:id", getProfileHandler);
 
 // @desc    Get all profiles or a specific profile by ID
 // @route   GET /v1/api/profiles/:id?
 // @access  Public
-router.get("/:id?", getProfileHandler);
+router.get("/", validateToken, getAllProfileHandler);
 
 // @desc    Update a profile
 // @route   PUT /v1/api/profiles/:id
@@ -34,6 +40,6 @@ router.put("/:id", validateToken, updateProfileHandler);
 // @access  Private
 router.delete("/:id", validateToken, deleteProfileHandler);
 
-module.exports = router;
+export default router;
 
 
