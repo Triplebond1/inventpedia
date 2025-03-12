@@ -89,9 +89,9 @@ const stagedPostSchema = new Schema<IStagedPost>(
     breadcrumbList: [
       { "@type": String, position: Number, name: String, item: String },
     ],
-    relatedPosts: [{ type: Schema.Types.ObjectId, ref: "Page" }],
-    nextPost: { type: Schema.Types.ObjectId, ref: "Page" },
-    previousPost: { type: Schema.Types.ObjectId, ref: "Page" },
+    relatedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    nextPost: { type: Schema.Types.ObjectId, ref: "Post" },
+    previousPost: { type: Schema.Types.ObjectId, ref: "Post" },
     ownContent: {type: Boolean, dafault: false},
     versionEdited: { type: Number },
   },

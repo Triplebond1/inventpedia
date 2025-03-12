@@ -4,12 +4,13 @@ import { Response } from "express";
 import { status } from "../../utilities/enums/statusCode";
 import { validateRequiredField } from "../../utilities/helpers/validateField";
 
-export const updateStaged = async (
+export const updateStagedHandler = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
-    let { data, stagedId }: { data: IStagedPost; stagedId: string } = req.body;
+    let data: Partial<IStagedPost> = req.body;
+    const { id } = req.params;
     const user = req.user;
 
     if (!data) {
@@ -24,15 +25,9 @@ export const updateStaged = async (
       return;
     }
 
-    validateRequiredField(stagedId, "staged ID", "string");
+    validateRequiredField(id, "staged ID", "string");
 
-    const stagedPost = await StagedPost.findById(stagedId)
-      .populate("author", "username") // Populate author field
-      .populate("categories", "name") // Populate categories
-      .populate("tags", "name") //populate tags
-      .populate("relatedPosts", "postLink")
-      .populate("nextPost", "postLink")
-      .populate("previousPost", "postLink");
+    const stagedPost = await StagedPost.findById(id);
 
     if (!stagedPost) {
       res.status(status.NotFound).json({ message: "staged post not found" });
@@ -48,28 +43,36 @@ export const updateStaged = async (
       return;
     }
 
-    stagedPost.title = data.title || stagedPost.title;
-    stagedPost.content = data.content || stagedPost.content;
-    stagedPost.keyTakeAway = data.keyTakeAway || stagedPost.keyTakeAway;
-    stagedPost.summary = data.summary || stagedPost.summary;
-    stagedPost.postContributor =
-      data.postContributor || stagedPost.postContributor;
-    stagedPost.metaDescription =
-      data.metaDescription || stagedPost.metaDescription;
-    stagedPost.focusKeywords = data.focusKeywords || stagedPost.focusKeywords;
-    stagedPost.categories = data.categories || stagedPost.categories;
-    stagedPost.tags = data.tags || stagedPost.tags;
-    stagedPost.featuredImage = data.featuredImage || stagedPost.featuredImage;
-    stagedPost.coverImage = data.coverImage || stagedPost.coverImage;
-    stagedPost.featuredVideo = data.featuredVideo || stagedPost.featuredVideo;
-    stagedPost.status = data.status || stagedPost.status;
-    stagedPost.ownContent = data.ownContent || stagedPost.ownContent;
-    stagedPost.relatedPosts = data.relatedPosts || stagedPost.relatedPosts;
-    stagedPost.breadcrumbList =
-      data.breadcrumbList || stagedPost.breadcrumbList;
+    let updateStaged: Partial<IStagedPost> = {
+      title: data.title || stagedPost.title,
+      content: data.content || stagedPost.content,
+      keyTakeAway: data.keyTakeAway || stagedPost.keyTakeAway,
+      summary: data.summary || stagedPost.summary,
+      postContributor: data.postContributor || stagedPost.postContributor,
+      metaDescription: data.metaDescription || stagedPost.metaDescription,
+      focusKeywords: data.focusKeywords || stagedPost.focusKeywords,
+      categories: data.categories || stagedPost.categories,
+      tags: data.tags || stagedPost.tags,
+      featuredImage: data.featuredImage || stagedPost.featuredImage,
+      coverImage: data.coverImage || stagedPost.coverImage,
+      featuredVideo: data.featuredVideo || stagedPost.featuredVideo,
+      status: data.status || stagedPost.status,
+      ownContent: data.ownContent || stagedPost.ownContent,
+      relatedPosts: data.relatedPosts || stagedPost.relatedPosts,
+      breadcrumbList: data.breadcrumbList || stagedPost.breadcrumbList,
+    };
 
     // Update the post with new data
-    const updatedStaged = stagedPost.save();
+    const updatedStaged = await StagedPost.findByIdAndUpdate(id, updateStaged, {
+      new: true, // Return the updated document
+    }).populate([
+      { path: "stagedPostAuthor", select: "username" }, // Populate author field
+      { path: "categories", select: "name" }, // Populate categories
+      { path: "tags", select: "name" }, // Populate tags
+      { path: "relatedPosts", select: "slug" }, // Populate related posts
+      { path: "nextPost", select: "slug" }, // Populate next post
+      { path: "previousPost", select: "slug" }, // Populate previous post
+    ]);
 
     if (!updatedStaged) {
       res
@@ -77,11 +80,17 @@ export const updateStaged = async (
         .json({ message: "unable to update stagedPost" });
       return;
     }
-    res
-      .status(status.Success)
-      .json({ message: "your staged post updated succesfully", updateStaged });
+
+    res.status(status.Success).json({
+      message: "your staged post updated succesfully",
+      stagedpost: updatedStaged,
+    });
     return;
   } catch (error: any) {
-    throw error;
+    console.log("an error occurred", error);
+    res
+      .status(status.ServerError)
+      .json({ message: "Error updating staged post." });
+    return;
   }
 };

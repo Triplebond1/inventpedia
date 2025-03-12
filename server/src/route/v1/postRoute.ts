@@ -8,6 +8,8 @@ import { getAllPostsHandler } from "../../controllers/v1/postController/getAllPo
 import { updatePostStatusHandler } from "../../controllers/v1/postController/updatePostStatus";
 import { updatePostHandler } from "../../controllers/v1/postController/updatePost";
 import { deletePostHandler } from "../../controllers/v1/postController/deletePost";
+import { updateStagedHandler } from "../../service/stagedPost/updateStage";
+import { getStageHandler } from "../../service/stagedPost/getStage";
 
 // @desc    Create a new post
 // @route   POST /v1/api/post
@@ -23,6 +25,11 @@ router.post(
 // @route   GET /v1/api/post /:id
 // @access  Public
 router.get("/:id", getAPostHandler);
+
+// @desc    Get a post with id
+// @route   GET /v1/api/post /:id
+// @access  Public
+router.get("/staged/:id", getStageHandler);
 
 // @desc    Get a post with permalink
 // @route   GET /v1/api/post/:permalink
@@ -45,7 +52,7 @@ router.put(
 );
 // @desc    Update an existing post
 // @route   PUT /v1/api/post/:id
-// @access  Private (Admin, editor and author)
+// @access  Private (all except guest)
 router.put(
   "/:id",
   validateToken,
@@ -59,6 +66,24 @@ router.put(
     "subscriber"
   ),
   updatePostHandler
+);
+
+// @desc    Update an existing post
+// @route   PUT /v1/api/post/staged/:id
+// @access  Private (everybody except guest)
+router.put(
+  "/staged/:id",
+  validateToken,
+  authorize(
+    "admin",
+    "author",
+    "contributor",
+    "editor",
+    "moderator",
+    "reviewer",
+    "subscriber"
+  ),
+  updateStagedHandler
 );
 
 // @desc    Delete a post
