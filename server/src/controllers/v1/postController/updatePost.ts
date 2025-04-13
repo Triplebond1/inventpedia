@@ -7,11 +7,11 @@ import { IPostVersion, PostVersion } from "../../../models/postVersioning";
 import {
   createPostNewVersion,
   CreatePostVersion,
-} from "../../../service/postVersion/createPostVersion";
+} from "../../../versionControl/postVersion/createPostVersion";
 import {
   createStagedPost,
   createStagedPostForAdmin,
-} from "../../../service/stagedPost/createStaged";
+} from "../../../versionControl/stagedPost/createStaged";
 
 const resStatus = status;
 
@@ -148,7 +148,7 @@ export const updatePostHandler = async (
       coverImage: coverImage || post.coverImage,
       featuredVideo: featuredVideo || post.featuredVideo,
       status: status,
-      publishDate: status === "published" ? new Date(): undefined,
+      publishDate: status === "published" ? new Date() : undefined,
       lastModifiedDate: new Date(),
       nextPost: nextPost || post.nextPost,
       previousPost: previousPost || post.previousPost,
@@ -174,7 +174,12 @@ export const updatePostHandler = async (
       isAuthorizedForStaging &&
       !(post.author.toString() === (user._id as string).toString())
     ) {
-      const stagePost = await createStagedPost(user, stagedData as IPost, updateData as IPost, stagedStatus as string);
+      const stagePost = await createStagedPost(
+        user,
+        stagedData as IPost,
+        updateData as IPost,
+        stagedStatus as string
+      );
       if (!stagePost) {
         res
           .status(resStatus.ServerError)
@@ -206,7 +211,7 @@ export const updatePostHandler = async (
       const createStagePost = await createStagedPostForAdmin(
         user,
         stagedData as IPost,
-        updateData as IPost,
+        updateData as IPost
       );
       if (!createStagePost) {
         res
@@ -289,9 +294,7 @@ export const updatePostHandler = async (
     return;
   } catch (error: any) {
     console.error("Error updating post:", error);
-    res
-      .status(resStatus.ServerError)
-      .json({ message: "Error updating post."});
+    res.status(resStatus.ServerError).json({ message: "Error updating post." });
     return;
   }
 };

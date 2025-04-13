@@ -1,0 +1,68 @@
+export type pageType = {
+    pageId?: string,
+    title: string,
+    content: string,
+    keyTakeAway?:string,
+    summary?: string,
+    pageContributor?: string,
+    metaDescription?: string,
+    parentPage?:string,
+    focuskeywords?: string,
+    categories?: string,
+    tags?:string,
+    featuredImage?: string,
+    coverImage?: string,
+    pageOtherImages?: string,
+    featuredVideo?: string,
+    status?: string,
+    nextPage?: string,
+    previousPage?: string,
+    relatedPages?: string,
+    breadcrumbList?: string,
+    social?:string 
+}
+
+export type postType = {
+    postId?: string,
+    title: string,
+    content: string,
+    keyTakeAway?:string,
+    summary?: string,
+    postContributor?: string,
+    metaDescription?: string,
+    parentPage?:string,
+    focuskeywords?: string,
+    categories?: string,
+    tags?:string,
+    featuredImage?: string,
+    coverImage?: string,
+    postOtherImages?: string,
+    featuredVideo?: string,
+    status?: string,
+    nextPost?: string,
+    previousPost?: string,
+    relatedPosts?: string,
+    breadcrumbList?: string,
+}
+
+export type profileType = {
+    userId?: string,
+    userName?: string,
+    userEmail?: string,
+    userRole?: string,
+    profilePicture: string,
+    website: string,
+    inventnexusPage: string,
+    location: string,
+    social: string,
+    bio: string,
+}
+
+export type userType = {
+    userId: string,
+    username: string,
+    email: string,
+    password: string,
+    role: string,
+    profilePicture: string,
+}

@@ -1,0 +1,27 @@
+Here are different kinds of buttons:
+
+# Based on Design
+1. Flat buttons: Simple, flat buttons without any shadows or borders.
+2. Raised buttons: Buttons with a raised appearance, often with shadows or borders.
+3. Ghost buttons: Transparent buttons with a subtle border or outline.
+4. Icon buttons: Buttons featuring an icon, often without text.
+5. Social media buttons: Buttons with social media logos, used for sharing or authentication.
+
+# Based on Functionality
+1. Submit buttons: Used to submit forms or complete an action.
+2. Reset buttons: Used to reset form fields or cancel an action.
+3. Cancel buttons: Used to cancel an action or close a dialog.
+4. Toggle buttons: Used to toggle between two or more states.
+5. Dropdown buttons: Used to trigger a dropdown menu or list.
+
+# Based on Interaction
+1. Hover buttons: Buttons that change appearance on hover.
+2. Active buttons: Buttons that change appearance when clicked or active.
+3. Disabled buttons: Buttons that are disabled or unresponsive.
+4. Loading buttons: Buttons that display a loading animation or indicator.
+
+# Other Types
+1. Call-to-action (CTA) buttons: Used to prompt users to take a specific action.
+2. Navigation buttons: Used for navigation, such as back or next buttons.
+3. Alert buttons: Used to draw attention to important information or alerts.
+4. Fab buttons: Floating action buttons, often used in mobile apps.

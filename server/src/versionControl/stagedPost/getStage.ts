@@ -1,4 +1,4 @@
-import { IStagedPost, StagedPost } from "../../models/stagedPost";
+import { StagedPost } from "../../models/stagedPost";
 import AuthRequest from "../../types/authRequest";
 import { status } from "../../utilities/enums/statusCode";
 import { validateRequiredField } from "../../utilities/helpers/validateField";
@@ -40,14 +40,3 @@ export const getStageHandler = async (
     return;
   }
 };
-
-// // Update the post with new data
-// const updatedStage = await stagedPost.save();
-// const populateUpdatedStage = await updatedStage.populate([
-//   { path: "stagedPostAuthor", select: "username" }, // Populate author field
-//   { path: "categories", select: "name" }, // Populate categories
-//   { path: "tags", select: "name" }, // Populate tags
-//   { path: "relatedPosts", select: "slug" }, // Populate related posts
-//   { path: "nextPost", select: "slug" }, // Populate next post
-//   { path: "previousPost", select: "slug" } // Populate previous post
-// ]);

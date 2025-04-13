@@ -8,8 +8,8 @@ import { getAllPostsHandler } from "../../controllers/v1/postController/getAllPo
 import { updatePostStatusHandler } from "../../controllers/v1/postController/updatePostStatus";
 import { updatePostHandler } from "../../controllers/v1/postController/updatePost";
 import { deletePostHandler } from "../../controllers/v1/postController/deletePost";
-import { updateStagedHandler } from "../../service/stagedPost/updateStage";
-import { getStageHandler } from "../../service/stagedPost/getStage";
+import { updateStagedHandler } from "../../versionControl/stagedPost/updateStage";
+import { getStageHandler } from "../../versionControl/stagedPost/getStage";
 
 // @desc    Create a new post
 // @route   POST /v1/api/post

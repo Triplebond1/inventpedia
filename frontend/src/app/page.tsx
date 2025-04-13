@@ -2,100 +2,333 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className=" flex flex-col bg-neutral-100  items-center justify-items-center min-h-screen pb-20">
+      {/* main Page body Section */}
+      <main className="flex flex-col items-center sm:items-start">
+        <div className="min-h-screen bg-gray-100 text-gray-900">
+          {/* Hero Section */}
+          <section className="h-screen flex items-center justify-center text-center bg-gradient-to-r from-blaze-orange-400 to-blaze-orange-600 text-white">
+            <HeroSection />
+          </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          {/* What is Inventpedia? */}
+          <section id="about" className="py-20 bg-white">
+            <AboutInventPediaSection />
+          </section>
+
+          <section id="why" className="py-20 bg-gray-100 text-center">
+            <WhyInventPediaSection />
+          </section>
+
+          {/* Featured Innovations */}
+          <section id="explore" className="py-20 bg-white">
+            <FeaturedInnovationSection />
+          </section>
+
+          {/* Section 4 - How You Can Contribute */}
+          <section id="contribute" className="py-20 bg-white text-center">
+            <HowToContributeSection />
+          </section>
+
+          {/* Section 5 – Build Your Personal Innovation Hub */}
+          <section id="innovation-hub" className="py-20 bg-white">
+            <BuildYourOwnInnovationHubSection />
+          </section>
+
+          {/* Social Proof & Testimonials */}
+          <section id="testimonials" className="py-20 bg-white text-center">
+            <ProofAndTestominialSection />
+          </section>
+
+          {/* Final CTA */}
+          <section className="py-20 bg-blaze-orange-600 text-white text-center">
+            <CallToActionSection />
+          </section>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
+
+const HeroSection = () => {
+  return (
+    <div>
+      <h2 className="text-4xl font-extrabold">
+        Shaping the Future, One Idea at a Time.
+      </h2>
+      <p className="mt-4 text-lg">
+        The world’s first open innovation hub where inventors, thinkers, and
+        creators unite.
+      </p>
+      <div className="mt-6 space-x-4">
+        <a
+          href="#join"
+          className="px-6 py-3 bg-white text-blaze-orange-600 font-semibold rounded-lg shadow-lg hover:bg-gray-200"
+        >
+          Join the Movement
+        </a>
+        <a
+          href="#discover"
+          className="px-6 py-3 border border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blaze-orange-600"
+        >
+          Explore Innovations
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const AboutInventPediaSection = () => {
+  return (
+    <div className="container mx-auto flex flex-col md:flex-row items-center">
+      {/* Left: Image */}
+      <div className="w-full md:w-1/2 p-6">
+        <Image
+          src="/images/innovation-collaboration.png"
+          alt="Innovation Collaboration"
+          width="40"
+          height="40"
+          className="rounded-lg shadow-lg"
+        />
+      </div>
+      {/* Right: Text */}
+      <div className="w-full md:w-1/2 p-6">
+        <h3 className="text-3xl font-bold mb-4">What is Inventpedia?</h3>
+        <p className="text-lg text-gray-700 mb-4">
+          Inventpedia is the first-of-its-kind open innovation hub designed for
+          inventors, thinkers, and creators to collaborate.
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-gray-600">
+          <li>
+            <strong>Crowdsourced Knowledge:</strong> Edit & improve content in
+            real-time.
+          </li>
+          <li>
+            <strong>Personal Innovation Hub:</strong> Publish your own research
+            & ideas.
+          </li>
+          <li>
+            <strong>Industry & Community-Driven:</strong> Connect with
+            inventors, engineers & scientists.
+          </li>
+          <li>
+            <strong>Next-Gen Tech Database:</strong> Discover the latest
+            breakthroughs before they go mainstream.
+          </li>
+        </ul>
+        <a
+          href="#start"
+          className="mt-6 inline-block px-6 py-3 bg-blaze-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blaze-orange-600"
+        >
+          Start Your Journey →
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const WhyInventPediaSection = () => {
+  return (
+    <div className="container mx-auto">
+      <h3 className="text-3xl font-bold mb-6">Why Inventpedia?</h3>
+      <p className="text-lg text-gray-700">
+        The future needs more thinkers, builders, and visionaries. But too
+        often, innovation stays locked in research labs or behind corporate
+        doors. Inventpedia is here to change that.
+      </p>
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="p-6 shadow-lg rounded-lg bg-white">
+          <h4 className="font-semibold">🚀 Open & Crowdsourced</h4>
+          <p className="text-gray-600">No gatekeepers, everyone has a voice.</p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-white">
+          <h4 className="font-semibold">🔄 Real-time Updates</h4>
+          <p className="text-gray-600">
+            Stay ahead with the latest discoveries.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-white">
+          <h4 className="font-semibold">📂 Personal Innovation Hub</h4>
+          <p className="text-gray-600">
+            Create, document, and share your research.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-white">
+          <h4 className="font-semibold">🤝 Industry & Community Driven</h4>
+          <p className="text-gray-600">
+            Connect with scientists, engineers, and entrepreneurs.
+          </p>
+        </div>
+      </div>
+      <div className="mt-8">
+        <a
+          href="#signup"
+          className="px-6 py-3 bg-blaze-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blaze-orange-600"
+        >
+          Start Innovating Today →
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const FeaturedInnovationSection = () => {
+  return (
+    <div className="container mx-auto text-center">
+      <h3 className="text-3xl font-bold mb-6">
+        Discover Cutting-Edge Innovations
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold">AI-Powered Materials</h4>
+          <p className="text-gray-600">
+            New aerospace technologies reshaping travel.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold">Quantum Computing</h4>
+          <p className="text-gray-600">
+            The next industrial revolution is here.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold">Medical Breakthroughs</h4>
+          <p className="text-gray-600">
+            Crowd-designed healthcare innovations.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const HowToContributeSection = () => {
+  return (
+    <div className="container mx-auto">
+      <h3 className="text-3xl font-bold mb-6">How You Can Contribute</h3>
+      <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+        Get involved in shaping the future of innovation by creating, sharing,
+        and collaborating with experts.
+      </p>
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold text-blaze-orange-600">
+            📌 Step 1: Create & Edit Content
+          </h4>
+          <p className="text-gray-600">
+            Help improve innovation knowledge by contributing insightful
+            content.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold text-blaze-orange-600">
+            📌 Step 2: Publish Your Own Inventions
+          </h4>
+          <p className="text-gray-600">
+            Get seen by top innovators and potential investors.
+          </p>
+        </div>
+        <div className="p-6 shadow-lg rounded-lg bg-gray-50">
+          <h4 className="font-semibold text-blaze-orange-600">
+            📌 Step 3: Collaborate With Experts
+          </h4>
+          <p className="text-gray-600">
+            Join discussions and research groups to shape the future.
+          </p>
+        </div>
+      </div>
+      <div className="mt-6">
+        <a
+          href="#join"
+          className="px-6 py-3 bg-blaze-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blaze-orange-600"
+        >
+          Start Contributing →
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const BuildYourOwnInnovationHubSection = () => {
+  return (
+    <div className="container mx-auto flex flex-col md:flex-row items-center">
+      {/* Left - Image */}
+      <div className="md:w-1/2 flex justify-center mb-6 md:mb-0">
+        <Image
+          src="/dashboard-mockup.png"
+          alt="User Dashboard"
+          width="40"
+          height="40"
+          className="w-3/4 rounded-lg shadow-lg"
+        />
+      </div>
+      {/* Right - Text */}
+      <div className="md:w-1/2 text-center md:text-left">
+        <h3 className="text-3xl font-bold mb-4">
+          Build Your Personal Innovation Hub
+        </h3>
+        <p className="text-lg text-gray-600 mb-4">
+          Your ideas deserve to be seen. Create your own blog, publish your
+          research, and showcase your innovation portfolio to the world.
+        </p>
+        <a
+          href="#create-hub"
+          className="px-6 py-3 bg-blaze-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blaze-orange-600"
+        >
+          Create Your Innovation Hub →
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const ProofAndTestominialSection = () => {
+  return (
+    <div className="container mx-auto max-w-3xl">
+      <h3 className="text-3xl font-bold mb-6">
+        Trusted by Innovators Worldwide
+      </h3>
+      <div className="space-y-6">
+        <blockquote className="p-6 shadow-md rounded-lg bg-gray-50">
+          <p className="text-lg italic">
+            “Inventpedia helped me connect with an investor who believed in my
+            AI-powered battery tech!”
+          </p>
+          <span className="block mt-2 font-semibold">— @InnovatorX</span>
+        </blockquote>
+        <blockquote className="p-6 shadow-md rounded-lg bg-gray-50">
+          <p className="text-lg italic">
+            “Finally, a place where breakthrough ideas don’t just sit in the
+            shadows!”
+          </p>
+          <span className="block mt-2 font-semibold">— @TechThinker</span>
+        </blockquote>
+      </div>
+      <div className="mt-6">
+        <a
+          href="#join"
+          className="px-6 py-3 bg-blaze-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blaze-orange-600"
+        >
+          Join the Movement →
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const CallToActionSection = () => {
+  return (
+    <div className="container mx-auto">
+      <h3 className="text-3xl font-bold mb-4">🚀 Ready to Shape the Future?</h3>
+      <p className="text-lg mb-6">
+        Join thousands of innovators and thinkers on Inventpedia today.
+      </p>
+      <a
+        href="#signup"
+        className="px-6 py-3 bg-white text-blaze-orange-600 font-semibold rounded-lg shadow-lg hover:bg-gray-200"
+      >
+        🔥 Sign Up & Start Innovating →
+      </a>
+    </div>
+  );
+};
